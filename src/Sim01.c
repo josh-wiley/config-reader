@@ -8,15 +8,19 @@
 #include "../lib/file_io/file_io.h"
 
 
+// Aliases.
+typedef enum { false, true } bool
+
+
 // Constants.
-const char* DEFAULT_CONFIG = "default.config";
+const char* DEFAULT_CONFIG = "../conf/default.config";
 
 
 // Program entry.
 int main(int num_args, char** args)
 {
     // Variables.
-    char* config;
+    char* config_ptr;
     bool was_file_read_successful = false;
 
 
@@ -24,7 +28,7 @@ int main(int num_args, char** args)
     if (num_args < 2)
     {
         // Use default config.
-        config = read_file(DEFAULT_CONFIG, was_file_read_successful);
+        config_ptr = read_file(DEFAULT_CONFIG, &was_file_read_successful);
 
 
         // Failure?
@@ -45,7 +49,7 @@ int main(int num_args, char** args)
     else
     {
         // Use user-supplied config.
-        config = read_file(args[1], was_file_read_successful);
+        config_ptr = read_file(args[1], &was_file_read_successful);
 
 
         // Failure?
@@ -61,6 +65,12 @@ int main(int num_args, char** args)
     }
 
 
+    // Display.
+    printf(config_ptr);
+
+
+    // Free memory.
+    free(config_ptr);
     
 
     // Exit (no error).

@@ -7,8 +7,12 @@
 #include "stdio.h"
 
 
+// Aliases.
+typedef enum { false, true } bool
+
+
 // Function Prototypes.
-char* read_file(char* file_name, bool& success);
+char* read_file(char*, bool*);
 
 
 // Implementation.
