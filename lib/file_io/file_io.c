@@ -1,4 +1,4 @@
-// Guard.
+// Header guard.
 #ifndef LIB_FILE_IO_C_
 #define LIB_FILE_IO_C_
 
@@ -31,7 +31,7 @@ char* read_file(char* file_name, bool* is_successful_ptr)
 
 
 	// Read file into memory.
-	fscanf(fin_ptr, mem_buff_ptr)
+	fscanf(fin_ptr, mem_buff_ptr);
 
 
 	// Done.

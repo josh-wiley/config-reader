@@ -1,4 +1,4 @@
-// Guard.
+// Header guard.
 #ifndef SIM_01_H_
 #define SIM_01_H_
 
@@ -9,11 +9,14 @@
 
 
 // Aliases.
-typedef enum { false, true } bool
+#ifndef BOOL_ALIAS_
+#define BOOL_ALIAS_
+typedef enum { false, true } bool;
+#endif
 
 
 // Constants.
-const char* DEFAULT_CONFIG = "../conf/default.config";
+const char* DEFAULT_CONFIG = "../conf/default.conf";
 
 
 // Program entry.
@@ -38,7 +41,7 @@ int main(int num_args, char** args)
             printf("\nUNABLE TO READ DEFAULT CONFIG:\nDefault config file has been moved/modified\n");
 
 
-            // Exit (error.)
+            // Exit (error).
             return 1;
         }
         

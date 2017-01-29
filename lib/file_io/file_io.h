@@ -1,4 +1,4 @@
-// Guard.
+// header guard.
 #ifndef LIB_FILE_IO_H_
 #define LIN_FILE_IO_H_
 
@@ -8,7 +8,10 @@
 
 
 // Aliases.
-typedef enum { false, true } bool
+#ifndef BOOL_ALIAS_
+#define BOOL_ALIAS_
+typedef enum { false, true } bool;
+#endif
 
 
 // Function Prototypes.
