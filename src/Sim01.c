@@ -6,17 +6,8 @@
 // Headers.
 #include "stdio.h"
 #include "../lib/file_io/file_io.h"
-
-
-// Aliases.
-#ifndef BOOL_ALIAS_
-#define BOOL_ALIAS_
-typedef enum { false, true } bool;
-#endif
-
-
-// Constants.
-const char* DEFAULT_CONFIG = "../conf/default.conf";
+#include "../lib/bool/bool.h"
+#include "../lib/configure/configure.h"
 
 
 // Program entry.
@@ -51,6 +42,13 @@ int main(int num_args, char** args)
     // Config supplied.
     else
     {
+        // Message.
+        char* message;
+
+
+        // Check file-type.
+
+
         // Use user-supplied config.
         config_ptr = read_file(args[1], &was_file_read_successful);
 
@@ -81,5 +79,5 @@ int main(int num_args, char** args)
 }
 
 
-// End guard.
+// End header guard.
 #endif
