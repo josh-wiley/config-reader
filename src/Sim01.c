@@ -14,7 +14,7 @@
 int main(int num_args, char** args)
 {
     // Variables.
-    char* config_ptr;
+    unsigned char* config_ptr;
     bool was_file_read_successful = false;
 
 

@@ -4,8 +4,8 @@
 
 
 // Constants.
-const char* DEFAULT_CONFIG = "../conf/default.conf";
-const char* SUPPORTED_FILE_TYPES[] = { "mdf", "conf" };
+const unsigned char* DEFAULT_CONFIG = "../../conf/default.conf";
+const unsigned char* SUPPORTED_FILE_TYPES[] = { "mdf", "conf" };
 
 
 // End header guard.

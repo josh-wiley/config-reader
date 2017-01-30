@@ -8,17 +8,18 @@
 
 
 // Read file into memory.
-char* read_file(char* file_name, bool* is_successful_ptr)
+unsigned char* read_file(unsigned char* file_name, bool* is_successful_ptr)
 {
 	// Variables.
-	FILE* fin_ptr = fopen(file_name, 'r');
-	char* mem_buff_ptr;
+	FILE* fin_ptr = fopen(file_name, "r");
+	unsigned char* buffer_ptr;
 	size_t file_size;
 
 
 	// File access failed?
 	if (fin_ptr == NULL)
 	{
+		printf("\nFILE ACCESS FAILED: %s\n", file_name); // TODO: REMOVE
 		// Exit (error).
 		*is_successful_ptr = false;
 		return NULL;
@@ -32,6 +33,7 @@ char* read_file(char* file_name, bool* is_successful_ptr)
 
 	// No data in file?
 	if (file_size == 0) {
+		printf("\nEMPTY FILE\n"); // TODO: REMOVE
 		// Exit (error).
 		*is_successful_ptr = false;
 		return NULL;
@@ -39,7 +41,7 @@ char* read_file(char* file_name, bool* is_successful_ptr)
 
 
 	// Create buffer for file data.
-	mem_buff_ptr = (char*) malloc(file_size);
+	buffer_ptr = (unsigned char*) malloc(file_size);
 
 
 	// Reset the file pointer.
@@ -47,7 +49,7 @@ char* read_file(char* file_name, bool* is_successful_ptr)
 
 
 	// Read file into memory.
-	fscanf(fin_ptr, mem_buff_ptr);
+	fscanf(buffer_ptr, sizeof(unsigned char), file_size, fin_ptr);
 
 
 	// Close file.
@@ -56,7 +58,7 @@ char* read_file(char* file_name, bool* is_successful_ptr)
 
 	// Done.
 	*is_successful_ptr = true;
-	return mem_buff_ptr;
+	return buffer_ptr;
 }
 
 

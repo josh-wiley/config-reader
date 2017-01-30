@@ -9,11 +9,7 @@
 
 
 // Function Prototypes.
-char* read_file(char*, bool*);
-
-
-// Implementation.
-#include "file_io.c"
+unsigned char* read_file(unsigned char*, bool*);
 
 
 // End header guard.
