@@ -9,7 +9,9 @@
 
 
 // Function Prototypes.
-unsigned char* read_file(unsigned char*, bool*);
+bool open_file(char*, FILE*);
+bool read_line(FILE*);
+bool close_file(FILE*);
 
 
 // End header guard.

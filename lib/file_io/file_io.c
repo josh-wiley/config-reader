@@ -7,36 +7,38 @@
 #include "file_io.h"
 
 
-// Read file into memory.
-unsigned char* read_file(unsigned char* file_name, bool* is_successful_ptr)
+// Open file.
+bool open_file(char* file_path, FILE* file_ptr)
 {
-	// Variables.
-	FILE* fin_ptr = fopen(file_name, "r");
-	unsigned char* buffer_ptr;
-	size_t file_size;
+	// Open file.
+	file_ptr = fopen(file_path);
 
 
-	// File access failed?
-	if (fin_ptr == NULL)
+	// Access unsuccessful?
+	if (!file_ptr)
 	{
-		printf("\nFILE ACCESS FAILED: %s\n", file_name); // TODO: REMOVE
-		// Exit (error).
-		*is_successful_ptr = false;
-		return NULL;
+		// Set message and exit.
+		printf("\n\nFILE ACCESS FAILED: %s\n\n", file_path);
 	}
 
 
-	// Get size of file.
-	fseek(SEEK_END, 0, fin_ptr);
-	file_size = ftell(fin_ptr);
+	// Return.
+	return file_ptr;
+}
+
+
+// Read line.
+bool read_line(FILE* file_ptr)
+{
+	// Variables.
+	unsigned char* buffer_ptr;
 
 
 	// No data in file?
-	if (file_size == 0) {
-		printf("\nEMPTY FILE\n"); // TODO: REMOVE
+	if (file_size == 0)
+	{
 		// Exit (error).
-		*is_successful_ptr = false;
-		return NULL;
+		return false;
 	}
 
 
@@ -44,21 +46,21 @@ unsigned char* read_file(unsigned char* file_name, bool* is_successful_ptr)
 	buffer_ptr = (unsigned char*) malloc(file_size);
 
 
-	// Reset the file pointer.
-	rewind(fin_ptr);
-
-
 	// Read file into memory.
 	fscanf(buffer_ptr, sizeof(unsigned char), file_size, fin_ptr);
 
 
-	// Close file.
-	fclose(fin_ptr);
-
-
 	// Done.
-	*is_successful_ptr = true;
 	return buffer_ptr;
+}
+
+
+// Close file.
+bool close_file(FILE* file_ptr)
+{
+	// Close and return.
+	fclose(file_ptr);
+	return true;
 }
 
 
