@@ -11,12 +11,12 @@
 bool configure_os(char* file_path, os_config* config_ptr)
 {
 	// Variables.
-	FILE* stream_ptr = NULL;
+	FILE* stream_ptr = open_file(file_path);
 	char* buffer_ptr = malloc(BUFFER_SIZE);
 
 
 	// Open file.
-	if (!open_file(file_path, stream_ptr))
+	if (!stream_ptr)
 	{
 		// Abort.
 		return false;
@@ -24,7 +24,7 @@ bool configure_os(char* file_path, os_config* config_ptr)
 
 
 	// Read line.
-	while (read_line(stream_ptr, buffer_ptr, BUFFER_SIZE, DELIMITER))
+	while (read_line(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_DELIMITER))
 	{
 		// Configure.
 		printf(buffer_ptr); // TODO: REMOVE

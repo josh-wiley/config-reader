@@ -8,10 +8,10 @@
 
 
 // Open file.
-bool open_file(char* file_path, FILE* file_ptr)
+FILE* open_file(char* file_path)
 {
 	// Open file.
-	file_ptr = fopen(file_path, "r");
+	FILE* file_ptr = fopen(file_path, "r");
 
 
 	// Access unsuccessful?
@@ -19,12 +19,12 @@ bool open_file(char* file_path, FILE* file_ptr)
 	{
 		// Alert and exit.
 		printf("\n\nFILE ACCESS FAILED: %s\n\n", file_path);
-		return false;
+		return NULL;
 	}
 
 
 	// Successful.
-	return true;
+	return file_ptr;
 }
 
 
@@ -62,13 +62,21 @@ bool read_line(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimi
 		// Delimiter?
 		if (unit == delimiter)
 		{
+			// Terminator.
+			buffer_ptr[i] = '\0';
+
+
 			// Done.
 			return true;
 		}
 
 
-		// Save.
-		buffer_ptr[i] = unit;
+		// Not whitespace?
+		if (unit == '\n' || unit == '\t' || unit == ' ')
+		{
+			// Save.
+			buffer_ptr[i] = unit;
+		}
 
 
 		// Increment.

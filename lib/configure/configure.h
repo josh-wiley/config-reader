@@ -11,13 +11,10 @@
 
 
 // Definitions.
-#define DELIMITER (char) ';'
+#define CONFIG_DELIMITER '\n'
+#define METADATA_DELIMITER ';'
 #define BUFFER_SIZE (size_t) 128
 #define DEFAULT_CONFIG "./conf/default.conf"
-
-
-// Constants.
-const char* CONFIG_FILE_TYPES[] = { "mdf", "conf" };
 
 
 // Function prototypes.
