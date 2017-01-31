@@ -4,7 +4,7 @@
 
 
 // Headers.
-#include "stdio.h"
+#include <stdio.h>
 #include "../lib/bool/bool.h"
 #include "../lib/os_config/os_config.h"
 #include "../lib/configure/configure.h"
@@ -19,7 +19,7 @@ int main(int num_args, char** args)
 
 
     // Configure OS.
-    if (!configure_os(file_path, *config))
+    if (!configure_os(file_path, &config))
     {
         // Abort.
         return 1;

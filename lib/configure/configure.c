@@ -11,7 +11,8 @@
 bool configure_os(char* file_path, os_config* config_ptr)
 {
 	// Variables.
-	FILE* stream_ptr;
+	FILE* stream_ptr = NULL;
+	char* buffer_ptr = malloc(BUFFER_SIZE);
 
 
 	// Open file.
@@ -23,9 +24,10 @@ bool configure_os(char* file_path, os_config* config_ptr)
 
 
 	// Read line.
-	while (read_line(stream_ptr))
+	while (read_line(stream_ptr, buffer_ptr, BUFFER_SIZE, DELIMITER))
 	{
 		// Configure.
+		printf(buffer_ptr); // TODO: REMOVE
 	}
 
 
@@ -33,8 +35,11 @@ bool configure_os(char* file_path, os_config* config_ptr)
 	close_file(stream_ptr);
 
 
+	// Free buffer.
+	free(buffer_ptr);
+
+
 	// Success.
-	message = "\n\nConfiguration file imported successfully.\n\n";
 	return true;
 }
 

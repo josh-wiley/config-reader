@@ -10,7 +10,7 @@
 
 // Function Prototypes.
 bool open_file(char*, FILE*);
-bool read_line(FILE*);
+bool read_line(FILE*, char*, size_t, char);
 bool close_file(FILE*);
 
 

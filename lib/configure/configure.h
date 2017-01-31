@@ -4,14 +4,20 @@
 
 
 // Headers.
+#include <stdlib.h>
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "../os_config/os_config.h"
 
 
+// Definitions.
+#define DELIMITER (char) ';'
+#define BUFFER_SIZE (size_t) 128
+#define DEFAULT_CONFIG "./conf/default.conf"
+
+
 // Constants.
-const unsigned char* DEFAULT_CONFIG = "./conf/default.conf";
-const unsigned char* SUPPORTED_FILE_TYPES[] = { "mdf", "conf" };
+const char* CONFIG_FILE_TYPES[] = { "mdf", "conf" };
 
 
 // Function prototypes.

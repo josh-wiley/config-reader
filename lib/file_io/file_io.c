@@ -11,47 +11,73 @@
 bool open_file(char* file_path, FILE* file_ptr)
 {
 	// Open file.
-	file_ptr = fopen(file_path);
+	file_ptr = fopen(file_path, "r");
 
 
 	// Access unsuccessful?
 	if (!file_ptr)
 	{
-		// Set message and exit.
+		// Alert and exit.
 		printf("\n\nFILE ACCESS FAILED: %s\n\n", file_path);
-	}
-
-
-	// Return.
-	return file_ptr;
-}
-
-
-// Read line.
-bool read_line(FILE* file_ptr)
-{
-	// Variables.
-	unsigned char* buffer_ptr;
-
-
-	// No data in file?
-	if (file_size == 0)
-	{
-		// Exit (error).
 		return false;
 	}
 
 
-	// Create buffer for file data.
-	buffer_ptr = (unsigned char*) malloc(file_size);
+	// Successful.
+	return true;
+}
 
 
-	// Read file into memory.
-	fscanf(buffer_ptr, sizeof(unsigned char), file_size, fin_ptr);
+// Read line.
+bool read_line(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
+{
+	// End of file?
+	if (feof(file_ptr) || ferror(file_ptr))
+	{
+		// Done.
+		return false;
+	}
+
+
+	// Variables.
+	int i = 0;
+	char unit;
+
+
+	// Read into buffer.
+	while (i < buffer_size)
+	{
+		// EOF?
+		if (feof(file_ptr))
+		{
+			// Abort.
+			return false;
+		}
+
+
+		// Get next char.
+		unit = fgetc(file_ptr);
+
+
+		// Delimiter?
+		if (unit == delimiter)
+		{
+			// Done.
+			return true;
+		}
+
+
+		// Save.
+		buffer_ptr[i] = unit;
+
+
+		// Increment.
+		i++;
+	}
 
 
 	// Done.
-	return buffer_ptr;
+	return true;
 }
 
 
