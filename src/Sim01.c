@@ -5,6 +5,7 @@
 
 // Headers.
 #include <stdio.h>
+#include <stdlib.h>
 #include "../lib/bool/bool.h"
 #include "../lib/os_config/os_config.h"
 #include "../lib/configure/configure.h"
@@ -27,9 +28,6 @@ int main(int num_args, char** args)
         // Abort.
         return 1;
     }
-
-
-    // Display config.
     
 
     // Exit (no error).

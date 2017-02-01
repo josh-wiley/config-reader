@@ -8,25 +8,17 @@
 
 
 // Attribute mapper.
-bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* config_ptr)
+bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 {
 	// Version/Phase attribute?
-	if (strcmp(buffer_ptr, "Version/Phase") == 0)
+	if (strcmp(buffer_ptr, VERSION_PHASE_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
 
 
-		// Success.
-		return true;
-	}
-
-
-	// File Path attribute?
-	else if (strcmp(buffer_ptr, FILE_PATH_ATTRIBUTE) == 0)
-	{
-		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		// Save.
+		config_ptr->version = atof(buffer_ptr);
 
 
 		// Success.
@@ -35,10 +27,14 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Processor cycle time attribute?
-	else if (strcmp(buffer_ptr, PROCESSOR_CYCLE_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, PROCESSOR_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->processor_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -47,10 +43,14 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Memory cycle time attribute?
-	else if (strcmp(buffer_ptr, MEMORY_CYCLE_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, MEMORY_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->memory_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -59,10 +59,14 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Hard drive cycle time attribute?
-	else if (strcmp(buffer_ptr, HDD_CYCLE_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, HDD_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->hdd_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -71,10 +75,14 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Keyboard cycle time attribute?
-	else if (strcmp(buffer_ptr, KEYBOARD_CYCLE_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, KEYBOARD_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+		
+		// Save.
+		config_ptr->keyboard_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -83,10 +91,14 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Mouse cycle time attribute?
-	else if (strcmp(buffer_ptr, MOUSE_CYCLE_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, MOUSE_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->mouse_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -95,23 +107,15 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 
-	// Monitor display time attribute?
+	// Monitor display period attribute?
 	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
 
 
-		// Success.
-		return true;
-	}
-
-
-	// Speaker cycle time attribute?
-	else if (strcmp(buffer_ptr, SPEAKER_CYCLE_TIME_ATTRIBUTE))
-	{
-		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		// Save.
+		config_ptr->monitor_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -119,11 +123,31 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 	}
 
 
-	// Printer cycle time attribute?
-	else if (strcmp(buffer_ptr, PRINTER_CYCLE_TIME_ATTRIBUTE))
+	// Speaker period attribute?
+	else if (strcmp(buffer_ptr, SPEAKER_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->speaker_period_ms = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Printer period attribute?
+	else if (strcmp(buffer_ptr, PRINTER_PERIOD_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		config_ptr->printer_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -138,6 +162,30 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
 
 
+		// Log to both?
+		if (strcmp(buffer_ptr, LOG_TO_BOTH_VALUE) == 0)
+		{
+			// Save.
+			config_ptr->log_dest = TO_BOTH;
+		}
+
+
+		// Log to file?
+		else if (strcmp(buffer_ptr, LOG_TO_FILE_VALUE) == 0)
+		{
+			// Save.
+			config_ptr->log_dest = TO_FILE;
+		}
+
+
+		// Log to display?
+		else if (strcmp(buffer_ptr, LOG_TO_DISPLAY_VALUE) == 0)
+		{
+			// Save.
+			config_ptr->log_dest = TO_DISPLAY;
+		}
+
+
 		// Success.
 		return true;
 	}
@@ -150,16 +198,24 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
 
 
+		// Save.
+		strcpy(config_ptr->log_file_path, buffer_ptr);
+
+
 		// Success.
 		return true;
 	}
 
 
-	// Metadate file path attribute?
+	// Metadata file path attribute?
 	else if (strcmp(buffer_ptr, METADATA_FILE_PATH_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Save.
+		strcpy(config_ptr->metadata_file_path, buffer_ptr);
 
 
 		// Success.
@@ -205,12 +261,6 @@ bool configure_os(char* file_path, os_config* config_ptr)
 	// Read line.
 	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER, false))
 	{
-		// TODO: REMOVE
-		printf("\n\n");
-		printf(buffer_ptr);
-		printf("\n\n");
-
-
 		// Try to map attribute to OS config.
 		if (!map_attribute_to_config(buffer_ptr, stream_ptr, config_ptr))
 		{
