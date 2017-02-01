@@ -14,14 +14,14 @@ typedef struct
 	char* metadata_file_path;
 	char* log_file_path;
 	destination log_dest;
-	unsigned long processor_period_ms;
-	unsigned long memory_period_ms;
-	unsigned long hard_drive_period_ms;
-	unsigned long monitor_period_ms;
-	unsigned long speaker_period_ms;
-	unsigned long printer_period_ms;
-	unsigned long keyboard_period_ms;
-	unsigned long mouse_period_ms;
+	unsigned int processor_period_ms;
+	unsigned int memory_period_ms;
+	unsigned int hard_drive_period_ms;
+	unsigned int monitor_period_ms;
+	unsigned int speaker_period_ms;
+	unsigned int printer_period_ms;
+	unsigned int keyboard_period_ms;
+	unsigned int mouse_period_ms;
 } os_config;
 
 

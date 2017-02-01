@@ -10,7 +10,8 @@
 
 // Function Prototypes.
 FILE* open_file(char*);
-bool read_line(FILE*, char*, size_t, char);
+bool read_until(FILE*, char*, size_t, char, bool);
+void ignore_incoming_whitespace(FILE*);
 bool close_file(FILE*);
 
 

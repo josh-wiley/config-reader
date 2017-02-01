@@ -5,13 +5,15 @@
 
 // Headers.
 #include <stdlib.h>
+#include <string.h>
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "../os_config/os_config.h"
 
 
 // Definitions.
-#define CONFIG_DELIMITER '\n'
+#define CONFIG_ATTRIBUTE_DELIMITER ':'
+#define CONFIG_VALUE_DELIMITER '\n'
 #define METADATA_DELIMITER ';'
 #define BUFFER_SIZE (size_t) 128
 #define DEFAULT_CONFIG "./conf/default.conf"

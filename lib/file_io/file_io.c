@@ -28,11 +28,11 @@ FILE* open_file(char* file_path)
 }
 
 
-// Read line.
-bool read_line(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
+// Read some.
+bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter, bool should_ignore_whitespace)
 {
-	// End of file?
-	if (feof(file_ptr) || ferror(file_ptr))
+	// Cannot read?
+	if (!file_ptr || feof(file_ptr) || ferror(file_ptr))
 	{
 		// Done.
 		return false;
@@ -72,7 +72,7 @@ bool read_line(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimi
 
 
 		// Not whitespace?
-		if (unit == '\n' || unit == '\t' || unit == ' ')
+		if (!should_ignore_whitespace || unit != '\n' || unit != '\t' || unit != ' ')
 		{
 			// Save.
 			buffer_ptr[i] = unit;
@@ -86,6 +86,42 @@ bool read_line(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimi
 
 	// Done.
 	return true;
+}
+
+
+// Ignore incoming whitespace.
+void ignore_incoming_whitespace(FILE* file_ptr)
+{
+	// Cannot read?
+	if (!file_ptr || ferror(file_ptr))
+	{
+		// Abort.
+		return;
+	}
+
+
+	// Buffer unit.
+	char unit;
+
+
+	// Ignore.
+	while (!feof(file_ptr))
+	{
+		// Get char.
+		unit = fgetc(file_ptr);
+
+
+		// Not whitespace?
+		if (!(unit == ' ' || unit == '\n' || unit == '\t'))
+		{
+			// Step back.
+			fseek(file_ptr, -1, SEEK_CUR);
+
+
+			// Done.
+			return;
+		}
+	}
 }
 
 

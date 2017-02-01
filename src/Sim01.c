@@ -13,8 +13,11 @@
 // Program entry.
 int main(int num_args, char** args)
 {
-    // Variables.
+    // OS config.
     os_config config;
+
+
+    // User-supplied or default config?
     char* file_path = num_args > 1 ? args[1] : DEFAULT_CONFIG;
 
 
