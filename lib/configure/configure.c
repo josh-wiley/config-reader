@@ -23,7 +23,7 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// File Path attribute?
-	else if (strcmp(buffer_ptr, "File Path") == 0)
+	else if (strcmp(buffer_ptr, FILE_PATH_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
@@ -35,7 +35,7 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// Processor cycle time attribute?
-	else if (strcmp(buffer_ptr, "Processor cycle time (msec)"))
+	else if (strcmp(buffer_ptr, PROCESSOR_CYCLE_TIME_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
@@ -44,10 +44,59 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 		// Success.
 		return true;
 	}
+
+
+	// Memory cycle time attribute?
+	else if (strcmp(buffer_ptr, MEMORY_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Hard drive cycle time attribute?
+	else if (strcmp(buffer_ptr, HDD_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Keyboard cycle time attribute?
+	else if (strcmp(buffer_ptr, KEYBOARD_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Mouse cycle time attribute?
+	else if (strcmp(buffer_ptr, MOUSE_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
 
 
 	// Monitor display time attribute?
-	else if (strcmp(buffer_ptr, "Monitor display time (msec)"))
+	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE))
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
@@ -58,8 +107,69 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 	}
 
 
+	// Speaker cycle time attribute?
+	else if (strcmp(buffer_ptr, SPEAKER_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Printer cycle time attribute?
+	else if (strcmp(buffer_ptr, PRINTER_CYCLE_TIME_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Log destination attribute?
+	else if (strcmp(buffer_ptr, LOG_DESTINATION_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Log file path attribute?
+	else if (strcmp(buffer_ptr, LOG_FILE_PATH_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Metadate file path attribute?
+	else if (strcmp(buffer_ptr, METADATA_FILE_PATH_ATTRIBUTE))
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+
+
+		// Success.
+		return true;
+	}
+
+
+
 	// File end?
-	else if (strcmp(buffer_ptr, "End Simulator Configuration File") == 0)
+	else if (strcmp(buffer_ptr, CONFIG_TERMINATOR_ATTRIBUTE) == 0)
 	{
 		// Done.
 		return true;
@@ -67,6 +177,7 @@ bool map_attribute_to_config(char* attribute, FILE* stream_ptr, os_config* confi
 
 
 	// No mapping.
+	printf("\n\nNo OS attribute for: %s\n\n", buffer_ptr);
 	return false;
 }
 
@@ -103,12 +214,6 @@ bool configure_os(char* file_path, os_config* config_ptr)
 		// Try to map attribute to OS config.
 		if (!map_attribute_to_config(buffer_ptr, stream_ptr, config_ptr))
 		{
-			// Alert.
-			printf("\n\nNo OS attribute for:\n");
-			printf(buffer_ptr);
-			printf("\n\n");
-
-
 			// Abort.
 			return false;
 		};
