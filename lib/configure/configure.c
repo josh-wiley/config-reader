@@ -7,7 +7,7 @@
 #include "configure.h"
 
 
-// Attribute mapper.
+// Config attribute mapper.
 bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 {
 	// Version/Phase attribute?
@@ -258,7 +258,7 @@ bool configure_os(char* file_path, os_config* config_ptr)
 	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
 
 
-	// Read line.
+	// Read from stream.
 	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
 	{
 		// Try to map attribute to OS config.
@@ -274,28 +274,12 @@ bool configure_os(char* file_path, os_config* config_ptr)
 	close_file(stream_ptr);
 
 
-	// Should log to screen?
-	if (config_ptr->log_dest == TO_DISPLAY || config_ptr->log_dest == TO_BOTH)
-	{
-		// Log to screen.
-		printf(
-			"\n\n\
-			%s: %f\n\
-			%s: %u\n\
-			%s: %u\n\
-			%s: %u\n\
-			\n\n"
-			,
-			VERSION_PHASE_ATTRIBUTE, config_ptr->version,
-			PROCESSOR_PERIOD_ATTRIBUTE, config_ptr->processor_period_ms,
-			MEMORY_PERIOD_ATTRIBUTE, config_ptr->memory_period_ms,
-			HDD_PERIOD_ATTRIBUTE, config_ptr->hdd_period_ms
-		);
-	}
-
-
 	// Free buffer.
 	free(buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nConfigured operating system.\n\n");
 
 
 	// Success.
@@ -306,7 +290,49 @@ bool configure_os(char* file_path, os_config* config_ptr)
 // Consume metadata.
 bool consume_metadata(os_config* config_ptr)
 {
-	
+	// Buffer.
+	char* buffer_ptr = malloc(BUFFER_SIZE);
+
+
+	// Get relative metadata file path.
+	strcpy(buffer_ptr, METADATA_FOLDER_PATH);
+	strcpy(buffer_pt, config_ptr->meta_data_file_path);
+
+
+	// Get file stream.
+	FILE* stream_ptr = open_file(buffer_ptr);
+
+
+	// Consume initial, utterly useless, line.
+	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
+
+
+	// Read from stream.
+	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, OPERATION_DELIMITER))
+	{
+		// Try to map attribute to OS config.
+		if (false) // TODO: SAVE TO METADATA DATA STRUCTURE
+		{
+			// Abort.
+			return false;
+		};
+	}
+
+
+	// Close stream.
+	close_file(stream_ptr);
+
+
+	// Free buffer.
+	free(buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nConsumed metadata.\n\n");
+
+
+	// Success.
+	return true;
 }
 
 

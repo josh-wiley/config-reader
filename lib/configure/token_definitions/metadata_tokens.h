@@ -4,6 +4,8 @@
 
 
 // Definitions.
+#define METADATA_FOLDER_PATH "./conf/"
+#define OPERATION_DELIMITER ';'
 
 
 // End header guard.
