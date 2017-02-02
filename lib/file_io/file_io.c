@@ -29,7 +29,7 @@ FILE* open_file(char* file_path)
 
 
 // Read some.
-bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter, bool should_ignore_whitespace)
+bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
 {
 	// Cannot read?
 	if (!file_ptr || feof(file_ptr) || ferror(file_ptr))
@@ -41,7 +41,27 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 
 	// Variables.
 	int i = 0;
-	char unit;
+	char unit = fgetc(file_ptr);
+
+
+	// Discard leading whitespace.
+	while (unit == ' ' || unit == '\t' || unit == '\n')
+	{
+		// EOF?
+		if (feof(file_ptr))
+		{
+			// Abort.
+			return false;
+		}
+
+
+		// Get next.
+		unit = fgetc(file_ptr);
+	}
+
+
+	// Save first character to buffer, then increment.
+	buffer_ptr[i++] = unit;
 
 
 	// Read into buffer.
@@ -71,57 +91,13 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 		}
 
 
-		// Not whitespace?
-		if (!should_ignore_whitespace || unit != '\n' || unit != '\t' || unit != ' ')
-		{
-			// Save.
-			buffer_ptr[i] = unit;
-		}
-
-
-		// Increment.
-		i++;
+		// Save, then increment.
+		buffer_ptr[i++] = unit;
 	}
 
 
 	// Done.
 	return true;
-}
-
-
-// Ignore incoming whitespace.
-void ignore_incoming_whitespace(FILE* file_ptr)
-{
-	// Cannot read?
-	if (!file_ptr || ferror(file_ptr))
-	{
-		// Abort.
-		return;
-	}
-
-
-	// Buffer unit.
-	char unit;
-
-
-	// Ignore.
-	while (!feof(file_ptr))
-	{
-		// Get char.
-		unit = fgetc(file_ptr);
-
-
-		// Not whitespace?
-		if (!(unit == ' ' || unit == '\n' || unit == '\t'))
-		{
-			// Step back.
-			fseek(file_ptr, -1, SEEK_CUR);
-
-
-			// Done.
-			return;
-		}
-	}
 }
 
 

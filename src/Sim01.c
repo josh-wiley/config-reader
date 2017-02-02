@@ -22,8 +22,8 @@ int main(int num_args, char** args)
     char* file_path = num_args > 1 ? args[1] : DEFAULT_CONFIG;
 
 
-    // Configure OS.
-    if (!configure_os(file_path, &config))
+    // Configure OS and consume metadata.
+    if (!configure_os(file_path, &config) && !consume_metadata(&config))
     {
         // Abort.
         return 1;

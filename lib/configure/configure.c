@@ -14,7 +14,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	if (strcmp(buffer_ptr, VERSION_PHASE_ATTRIBUTE) == 0)
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -30,7 +30,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, PROCESSOR_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -46,7 +46,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, MEMORY_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -62,7 +62,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, HDD_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -78,7 +78,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, KEYBOARD_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 		
 		// Save.
@@ -94,7 +94,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, MOUSE_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -111,7 +111,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -127,7 +127,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, SPEAKER_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -143,7 +143,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, PRINTER_PERIOD_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -159,7 +159,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, LOG_DESTINATION_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Log to both?
@@ -195,7 +195,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, LOG_FILE_PATH_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -211,7 +211,7 @@ bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* conf
 	else if (strcmp(buffer_ptr, METADATA_FILE_PATH_ATTRIBUTE))
 	{
 		// Get value.
-		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER, true);
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
 		// Save.
@@ -255,11 +255,11 @@ bool configure_os(char* file_path, os_config* config_ptr)
 
 
 	// Consume initial, utterly useless, line.
-	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n', true);
+	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
 
 
 	// Read line.
-	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER, false))
+	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
 	{
 		// Try to map attribute to OS config.
 		if (!map_attribute_to_config(buffer_ptr, stream_ptr, config_ptr))
@@ -267,15 +267,31 @@ bool configure_os(char* file_path, os_config* config_ptr)
 			// Abort.
 			return false;
 		};
-
-
-		// Ignore incoming whitespace.
-		ignore_incoming_whitespace(stream_ptr);
 	}
 
 
 	// Close stream.
 	close_file(stream_ptr);
+
+
+	// Should log to screen?
+	if (config_ptr->log_dest == TO_DISPLAY || config_ptr->log_dest == TO_BOTH)
+	{
+		// Log to screen.
+		printf(
+			"\n\n\
+			%s: %f\n\
+			%s: %u\n\
+			%s: %u\n\
+			%s: %u\n\
+			\n\n"
+			,
+			VERSION_PHASE_ATTRIBUTE, config_ptr->version,
+			PROCESSOR_PERIOD_ATTRIBUTE, config_ptr->processor_period_ms,
+			MEMORY_PERIOD_ATTRIBUTE, config_ptr->memory_period_ms,
+			HDD_PERIOD_ATTRIBUTE, config_ptr->hdd_period_ms
+		);
+	}
 
 
 	// Free buffer.
@@ -284,6 +300,13 @@ bool configure_os(char* file_path, os_config* config_ptr)
 
 	// Success.
 	return true;
+}
+
+
+// Consume metadata.
+bool consume_metadata(os_config* config_ptr)
+{
+	
 }
 
 
