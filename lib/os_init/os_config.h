@@ -3,8 +3,13 @@
 #define LIB_OS_CONFIG_
 
 
+// Headers.
+#include "os_metadata.h"
+
+
 // Definitions.
 #define STRING_SIZE (size_t) 128
+#define MAX_OPERATIONS (size_t) 128
 
 
 // Log destination.
@@ -26,6 +31,7 @@ typedef struct
 	unsigned int printer_period_ms;
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
+	os_metadata metadata[MAX_OPERATIONS];
 } os_config;
 
 

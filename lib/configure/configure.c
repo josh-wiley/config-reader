@@ -8,7 +8,7 @@
 
 
 // Config attribute mapper.
-bool map_attribute_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
+bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 {
 	// Version/Phase attribute?
 	if (strcmp(buffer_ptr, VERSION_PHASE_ATTRIBUTE) == 0)
@@ -262,7 +262,7 @@ bool configure_os(char* file_path, os_config* config_ptr)
 	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
 	{
 		// Try to map attribute to OS config.
-		if (!map_attribute_to_config(buffer_ptr, stream_ptr, config_ptr))
+		if (!map_to_config(buffer_ptr, stream_ptr, config_ptr))
 		{
 			// Abort.
 			return false;
