@@ -23,7 +23,7 @@ int main(int num_args, char** args)
 
 
     // Configure OS and consume metadata.
-    if (!configure_os(file_path, &config) && !consume_metadata(&config))
+    if (!configure_os(file_path, &config) || !consume_metadata(&config))
     {
         // Abort.
         return 1;

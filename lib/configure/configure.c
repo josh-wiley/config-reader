@@ -238,6 +238,56 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 }
 
 
+// Add metadata.
+bool add_metadata(os_config* config_ptr, char* buffer_ptr)
+{
+	// Match first character to metadata code.
+	switch (buffer_ptr[0])
+	{
+		// OS?
+		case OS_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = OS;
+			return true;
+		
+
+		// Application?
+		case APPLICATION_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = APPLICATION;
+			return true;
+		
+
+		// Process?
+		case PROCESS_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = PROCESS;
+			return true;
+
+
+		// Input?
+		case INPUT_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = INPUT;
+			return true;
+
+
+		// Output?
+		case OUTPUT_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = OUTPUT;
+			return true;
+		
+
+		// Memory?
+		case MEMORY_CODE:
+			config_ptr->metadata[config_ptr->num_metadata].code = MEMORY;
+			return true;
+
+
+		// No match?
+		default:
+			printf("\n\nNo matching metadata code: %c\n\n", buffer_ptr[0]);
+			return false;
+	}
+}
+
+
 // Configure OS.
 bool configure_os(char* file_path, os_config* config_ptr)
 {
@@ -296,7 +346,7 @@ bool consume_metadata(os_config* config_ptr)
 
 	// Get relative metadata file path.
 	strcpy(buffer_ptr, METADATA_FOLDER_PATH);
-	strcpy(buffer_pt, config_ptr->meta_data_file_path);
+	strcpy(buffer_ptr, config_ptr->metadata_file_path);
 
 
 	// Get file stream.
@@ -311,7 +361,7 @@ bool consume_metadata(os_config* config_ptr)
 	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, OPERATION_DELIMITER))
 	{
 		// Try to map attribute to OS config.
-		if (false) // TODO: SAVE TO METADATA DATA STRUCTURE
+		if (!add_metadata(config_ptr, buffer_ptr))
 		{
 			// Abort.
 			return false;

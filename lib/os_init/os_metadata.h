@@ -18,10 +18,10 @@ typedef enum { START, END, RUN, HDD, KEYBOARD, MOUSE, MONITOR, SPEAKER, BLOCK, A
 // Metadata.
 typedef struct
 {
-	metadata_code code,
-	metadata_descriptor descriptor,
-	unsigned int cycles
-} os_metadata
+	metadata_code code;
+	metadata_descriptor descriptor;
+	unsigned int cycles;
+} os_metadata;
 
 
 // End header guard.
