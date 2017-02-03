@@ -238,51 +238,316 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 }
 
 
-// Add metadata.
-bool add_metadata(os_config* config_ptr, char* buffer_ptr)
+// Is valid descriptor for code?
+bool is_valid_metadata_descriptor(metadata_code code, char* descriptor)
 {
+	// Valid descriptor based on code?
+	switch (code)
+	{
+		// OS?
+		case OS:
+			return strcmp(descriptor, START_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, END_DESCRIPTOR) == 0;
+
+
+		// Application?
+		case APPLICATION:
+			return strcmp(descriptor, START_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, END_DESCRIPTOR) == 0;
+
+
+		// Process?
+		case PROCESS:
+			return strcmp(descriptor, RUN_DESCRIPTOR) == 0;
+
+
+		// Input?
+		case INPUT:
+			return strcmp(descriptor, HDD_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, KEYBOARD_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, MOUSE_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, PRINTER_DESCRIPTOR);
+
+
+		// Output? 
+		case OUTPUT:
+			return strcmp(descriptor, HDD_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, MONITOR_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, SPEAKER_DESCRIPTOR) == 0;
+
+
+		// Memory?
+		case MEMORY:
+			return strcmp(descriptor, BLOCK_DESCRIPTOR) == 0 ||
+				strcmp(descriptor, ALLOCATE_DESCRIPTOR) == 0;
+		
+
+		// Default.
+		default:
+			return false;
+	}
+}
+
+
+// Add metadata.
+bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
+{
+	// Save current metadata position.
+	unsigned int i = config_ptr->num_metadata;
+
+
 	// Match first character to metadata code.
 	switch (buffer_ptr[0])
 	{
 		// OS?
 		case OS_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = OS;
+			// Add code.
+			config_ptr->metadata[i].code = OS;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(OS, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, OS_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr); // TODO: USE PROPER ENUM VALUE
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 		
 
 		// Application?
 		case APPLICATION_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = APPLICATION;
+			// Add code.
+			config_ptr->metadata[i].code = APPLICATION;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(APPLICATION, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, APPLICATION_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 		
 
 		// Process?
 		case PROCESS_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = PROCESS;
+			// Add code.
+			config_ptr->metadata[i].code = PROCESS;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(PROCESS, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, PROCESS_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 
 
 		// Input?
 		case INPUT_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = INPUT;
+			// Add code.
+			config_ptr->metadata[i].code = INPUT;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(INPUT, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, INPUT_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 
 
 		// Output?
 		case OUTPUT_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = OUTPUT;
+			// Add code.
+			config_ptr->metadata[i].code = OUTPUT;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(OUTPUT, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, OUTPUT_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 		
 
 		// Memory?
 		case MEMORY_CODE:
-			config_ptr->metadata[config_ptr->num_metadata].code = MEMORY;
+			// Add code.
+			config_ptr->metadata[i].code = MEMORY;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Try to add the descriptor.
+			if (!is_valid_metadata_descriptor(MEMORY, buffer_ptr))
+			{
+				// Abort.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, buffer_ptr, MEMORY_CODE
+				);
+				return false;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+
+
+			// Increment number of metadata.
+			config_ptr->num_metadata++;
+
+
+			// Done.
 			return true;
 
 
 		// No match?
 		default:
-			printf("\n\nNo matching metadata code: %c\n\n", buffer_ptr[0]);
+			// Abort
+			printf("\n\n\
+				ERROR READING CODE %i:\n\
+				Invalid code \"%c\".\
+				\n\n",
+				i + 1, buffer_ptr[0]
+			);
 			return false;
 	}
 }
@@ -352,15 +617,19 @@ bool consume_metadata(os_config* config_ptr)
 	FILE* stream_ptr = open_file(buffer_ptr);
 
 
+	// Clear metadata.
+	config_ptr->num_metadata = 0;
+
+
 	// Consume initial, utterly useless, line.
 	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
 
 
 	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, OPERATION_DELIMITER))
+	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CODE_TERMINATOR))
 	{
 		// Try to map attribute to OS config.
-		if (!add_metadata(config_ptr, buffer_ptr))
+		if (!add_metadata(config_ptr, buffer_ptr, stream_ptr))
 		{
 			// Abort.
 			close_file(stream_ptr);

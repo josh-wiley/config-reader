@@ -60,6 +60,18 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 	}
 
 
+	// Delimiter?
+	if (unit == delimiter)
+	{
+		// Terminator.
+		buffer_ptr[i] = '\0';
+
+
+		// Done.
+		return true;
+	}
+
+
 	// Save first character to buffer, then increment.
 	buffer_ptr[i++] = unit;
 
