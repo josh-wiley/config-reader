@@ -291,17 +291,13 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr)
 // Configure OS.
 bool configure_os(char* file_path, os_config* config_ptr)
 {
-	// Variables.
+	// Get stream.
 	FILE* stream_ptr = open_file(file_path);
+
+
+	// Buffer.
 	char* buffer_ptr = malloc(BUFFER_SIZE);
-
-
-	// Open file.
-	if (!stream_ptr)
-	{
-		// Abort.
-		return false;
-	}
+	memset(buffer_ptr, '\0', BUFFER_SIZE);
 
 
 	// Consume initial, utterly useless, line.
@@ -315,6 +311,8 @@ bool configure_os(char* file_path, os_config* config_ptr)
 		if (!map_to_config(buffer_ptr, stream_ptr, config_ptr))
 		{
 			// Abort.
+			close_file(stream_ptr);
+			free(buffer_ptr);
 			return false;
 		}
 	}
@@ -365,6 +363,8 @@ bool consume_metadata(os_config* config_ptr)
 		if (!add_metadata(config_ptr, buffer_ptr))
 		{
 			// Abort.
+			close_file(stream_ptr);
+			free(buffer_ptr);
 			return false;
 		};
 	}
