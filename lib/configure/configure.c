@@ -27,7 +27,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Processor cycle time attribute?
-	else if (strcmp(buffer_ptr, PROCESSOR_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, PROCESSOR_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -43,7 +43,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Memory cycle time attribute?
-	else if (strcmp(buffer_ptr, MEMORY_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, MEMORY_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -59,7 +59,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Hard drive cycle time attribute?
-	else if (strcmp(buffer_ptr, HDD_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, HDD_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -75,7 +75,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Keyboard cycle time attribute?
-	else if (strcmp(buffer_ptr, KEYBOARD_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, KEYBOARD_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -91,7 +91,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Mouse cycle time attribute?
-	else if (strcmp(buffer_ptr, MOUSE_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, MOUSE_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -108,7 +108,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Monitor display period attribute?
-	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -124,7 +124,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Speaker period attribute?
-	else if (strcmp(buffer_ptr, SPEAKER_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, SPEAKER_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -140,7 +140,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Printer period attribute?
-	else if (strcmp(buffer_ptr, PRINTER_PERIOD_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, PRINTER_PERIOD_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -156,7 +156,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Log destination attribute?
-	else if (strcmp(buffer_ptr, LOG_DESTINATION_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, LOG_DESTINATION_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -192,7 +192,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Log file path attribute?
-	else if (strcmp(buffer_ptr, LOG_FILE_PATH_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, LOG_FILE_PATH_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -208,7 +208,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 	// Metadata file path attribute?
-	else if (strcmp(buffer_ptr, METADATA_FILE_PATH_ATTRIBUTE))
+	else if (strcmp(buffer_ptr, METADATA_FILE_PATH_ATTRIBUTE) == 0)
 	{
 		// Get value.
 		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
@@ -316,7 +316,7 @@ bool configure_os(char* file_path, os_config* config_ptr)
 		{
 			// Abort.
 			return false;
-		};
+		}
 	}
 
 
@@ -342,11 +342,12 @@ bool consume_metadata(os_config* config_ptr)
 {
 	// Buffer.
 	char* buffer_ptr = malloc(BUFFER_SIZE);
+	memset(buffer_ptr, '\0', BUFFER_SIZE);
 
 
 	// Get relative metadata file path.
-	strcpy(buffer_ptr, METADATA_FOLDER_PATH);
-	strcpy(buffer_ptr, config_ptr->metadata_file_path);
+	strcat(buffer_ptr, METADATA_FOLDER_PATH);
+	strcat(buffer_ptr, config_ptr->metadata_file_path);
 
 
 	// Get file stream.
