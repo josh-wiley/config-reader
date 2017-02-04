@@ -9,7 +9,7 @@
 
 // Definitions.
 #define STRING_SIZE (size_t) 128
-#define MAX_OPERATIONS (size_t) 128
+#define MAX_METADATA (size_t) 512
 
 
 // Log destination.
@@ -31,7 +31,7 @@ typedef struct
 	unsigned int printer_period_ms;
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
-	os_metadata metadata[MAX_OPERATIONS];
+	os_metadata metadata[MAX_METADATA];
 	int num_metadata;
 } os_config;
 
