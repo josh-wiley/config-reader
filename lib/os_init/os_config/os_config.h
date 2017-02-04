@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_OS_CONFIG_
-#define LIB_OS_CONFIG_
+#ifndef LIB_OS_CONFIG_H_
+#define LIB_OS_CONFIG_H_
 
 
 // Headers.

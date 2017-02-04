@@ -142,8 +142,30 @@ bool log_to_display(os_config* config_ptr, int* cycles_ptr)
 	// Metadata start.
 	printf("\n\n%s", METADATA_LOG_START);
 
+
+	// Variables.
+	unsigned int total = config_ptr->num_metadata;
+	os_metadata metadata;
+
 	
-	// TODO: LOG METRICS
+	// Log metadata metrics.
+	for (unsigned int i = 0; i < total; i++) 
+	{
+		// Save.
+		metadata = config_ptr->metadata[i];
+
+
+		// Display.
+		printf(
+			"\n%c(%s)%u - %u %s",
+			get_code(&metadata), get_descriptor(&metadata), metadata.cycles,
+			cycles_ptr[i], METADATA_CYCLE_UNITS
+		);
+	}
+
+
+	// Done.
+	printf("\n\n");
 
 
 	// Success.

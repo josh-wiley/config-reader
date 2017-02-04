@@ -1,6 +1,10 @@
 // Header guard.
-#ifndef LIB_OS_METADATA_
-#define LIB_OS_METADATA_
+#ifndef LIB_OS_METADATA_H_
+#define LIB_OS_METADATA_H_
+
+
+// Headers.
+#include "./tokens.h"
 
 
 // Definitions.
@@ -22,6 +26,11 @@ typedef struct
 	metadata_descriptor descriptor;
 	unsigned int cycles;
 } os_metadata;
+
+
+// Function prototypes.
+char get_code(os_metadata*);
+char* get_descriptor(os_metadata*);
 
 
 // End header guard.
