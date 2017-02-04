@@ -7,6 +7,115 @@
 #include "configure.h"
 
 
+// Function prototypes.
+bool map_to_config(char*, FILE*, os_config*);
+bool add_metadata(os_config*, char*, FILE*);
+bool add_metadata_descriptor(os_metadata*, char*);
+
+
+// Configure OS.
+bool configure_os(char* file_path, os_config* config_ptr)
+{
+	// Get stream.
+	FILE* stream_ptr = open_file(file_path);
+
+
+	// Buffer.
+	char* buffer_ptr = malloc(BUFFER_SIZE);
+	memset(buffer_ptr, '\0', BUFFER_SIZE);
+
+
+	// Consume initial, utterly useless, line.
+	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
+
+
+	// Read from stream.
+	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
+	{
+		// Try to map attribute to OS config.
+		if (!map_to_config(buffer_ptr, stream_ptr, config_ptr))
+		{
+			// Abort.
+			close_file(stream_ptr);
+			free(buffer_ptr);
+			return false;
+		}
+	}
+
+
+	// Close stream.
+	close_file(stream_ptr);
+
+
+	// Free buffer.
+	free(buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nConfigured operating system.\n\n");
+
+
+	// Success.
+	return true;
+}
+
+
+// Consume metadata.
+bool consume_metadata(os_config* config_ptr)
+{
+	// Buffer.
+	char* buffer_ptr = malloc(BUFFER_SIZE);
+	memset(buffer_ptr, '\0', BUFFER_SIZE);
+
+
+	// Get relative metadata file path.
+	strcat(buffer_ptr, METADATA_FOLDER_PATH);
+	strcat(buffer_ptr, config_ptr->metadata_file_path);
+
+
+	// Get file stream.
+	FILE* stream_ptr = open_file(buffer_ptr);
+
+
+	// Clear metadata.
+	config_ptr->num_metadata = 0;
+
+
+	// Consume initial, utterly useless, line.
+	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
+
+
+	// Read from stream.
+	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CODE_TERMINATOR))
+	{
+		// Try to map attribute to OS config.
+		if (!add_metadata(config_ptr, buffer_ptr, stream_ptr))
+		{
+			// Abort.
+			close_file(stream_ptr);
+			free(buffer_ptr);
+			return false;
+		};
+	}
+
+
+	// Close stream.
+	close_file(stream_ptr);
+
+
+	// Free buffer.
+	free(buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nConsumed metadata.\n\n");
+
+
+	// Success.
+	return true;
+}
+
+
 // Config attribute mapper.
 bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 {
@@ -235,170 +344,6 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 	// No mapping.
 	printf("\n\nNo OS attribute for: %s\n\n", buffer_ptr);
 	return false;
-}
-
-
-// Is valid descriptor for code?
-bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
-{
-	// Valid descriptor based on code?
-	switch (metadata->code)
-	{
-		// OS?
-		case OS:
-
-
-		// Application?
-		case APPLICATION:
-			// Start?
-			if (strcmp(buffer_ptr, START_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = START;
-				return true;
-			}
-
-
-			// End?
-			if (strcmp(buffer_ptr, END_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = END;
-				return true;
-			}
-
-
-			// Descriptor DNE.
-			return false;
-
-
-		// Process?
-		case PROCESS:
-			// Run?
-			if (strcmp(buffer_ptr, RUN_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = RUN;
-				return true;
-			}
-
-
-			// Descriptor DNE.
-			return false;
-
-
-		// Input?
-		case INPUT:
-			// HDD?
-			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = HDD;
-				return true;
-			}
-
-
-			// Keyboard?
-			if (strcmp(buffer_ptr, KEYBOARD_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = KEYBOARD;
-				return true;
-			}
-
-
-			// Mouse?
-			if (strcmp(buffer_ptr, MOUSE_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = MOUSE;
-				return true;
-			}
-			
-			
-			// Printer?
-			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = PRINTER;
-				return true;
-			}
-
-
-			// Descriptor DNE.
-			return false;
-
-
-		// Output? 
-		case OUTPUT:
-			// HDD?
-			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = HDD;
-				return true;
-			}
-
-
-			// Monitor?
-			if (strcmp(buffer_ptr, MONITOR_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = MONITOR;
-				return true;
-			}
-			
-			
-			// Speaker?
-			if (strcmp(buffer_ptr, SPEAKER_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = SPEAKER;
-				return true;
-			}
-
-
-			// Speaker?
-			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = PRINTER;
-				return true;
-			}
-
-
-			// Descriptor DNE.
-			return false;
-
-
-		// Memory?
-		case MEMORY:
-			// Block?
-			if (strcmp(buffer_ptr, BLOCK_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = BLOCK;
-				return true;
-			}
-
-
-			// Allocate?
-			if (strcmp(buffer_ptr, ALLOCATE_DESCRIPTOR) == 0)
-			{
-				// Add.
-				metadata->descriptor = ALLOCATE;
-				return true;
-			}
-
-
-			// Descriptor DNE.
-			return false;
-		
-
-		// Default.
-		default:
-			return false;
-	}
 }
 
 
@@ -666,106 +611,167 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 }
 
 
-// Configure OS.
-bool configure_os(char* file_path, os_config* config_ptr)
+// Is valid descriptor for code?
+bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
 {
-	// Get stream.
-	FILE* stream_ptr = open_file(file_path);
-
-
-	// Buffer.
-	char* buffer_ptr = malloc(BUFFER_SIZE);
-	memset(buffer_ptr, '\0', BUFFER_SIZE);
-
-
-	// Consume initial, utterly useless, line.
-	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
-
-
-	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
+	// Valid descriptor based on code?
+	switch (metadata->code)
 	{
-		// Try to map attribute to OS config.
-		if (!map_to_config(buffer_ptr, stream_ptr, config_ptr))
-		{
-			// Abort.
-			close_file(stream_ptr);
-			free(buffer_ptr);
+		// OS?
+		case OS:
+
+
+		// Application?
+		case APPLICATION:
+			// Start?
+			if (strcmp(buffer_ptr, START_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = START;
+				return true;
+			}
+
+
+			// End?
+			if (strcmp(buffer_ptr, END_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = END;
+				return true;
+			}
+
+
+			// Descriptor DNE.
 			return false;
-		}
-	}
 
 
-	// Close stream.
-	close_file(stream_ptr);
+		// Process?
+		case PROCESS:
+			// Run?
+			if (strcmp(buffer_ptr, RUN_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = RUN;
+				return true;
+			}
 
 
-	// Free buffer.
-	free(buffer_ptr);
-
-
-	// Checkpoint.
-	printf("\n\nConfigured operating system.\n\n");
-
-
-	// Success.
-	return true;
-}
-
-
-// Consume metadata.
-bool consume_metadata(os_config* config_ptr)
-{
-	// Buffer.
-	char* buffer_ptr = malloc(BUFFER_SIZE);
-	memset(buffer_ptr, '\0', BUFFER_SIZE);
-
-
-	// Get relative metadata file path.
-	strcat(buffer_ptr, METADATA_FOLDER_PATH);
-	strcat(buffer_ptr, config_ptr->metadata_file_path);
-
-
-	// Get file stream.
-	FILE* stream_ptr = open_file(buffer_ptr);
-
-
-	// Clear metadata.
-	config_ptr->num_metadata = 0;
-
-
-	// Consume initial, utterly useless, line.
-	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
-
-
-	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CODE_TERMINATOR))
-	{
-		// Try to map attribute to OS config.
-		if (!add_metadata(config_ptr, buffer_ptr, stream_ptr))
-		{
-			// Abort.
-			close_file(stream_ptr);
-			free(buffer_ptr);
+			// Descriptor DNE.
 			return false;
-		};
+
+
+		// Input?
+		case INPUT:
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return true;
+			}
+
+
+			// Keyboard?
+			if (strcmp(buffer_ptr, KEYBOARD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = KEYBOARD;
+				return true;
+			}
+
+
+			// Mouse?
+			if (strcmp(buffer_ptr, MOUSE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MOUSE;
+				return true;
+			}
+			
+			
+			// Printer?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
+
+
+		// Output? 
+		case OUTPUT:
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return true;
+			}
+
+
+			// Monitor?
+			if (strcmp(buffer_ptr, MONITOR_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MONITOR;
+				return true;
+			}
+			
+			
+			// Speaker?
+			if (strcmp(buffer_ptr, SPEAKER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = SPEAKER;
+				return true;
+			}
+
+
+			// Speaker?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
+
+
+		// Memory?
+		case MEMORY:
+			// Block?
+			if (strcmp(buffer_ptr, BLOCK_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = BLOCK;
+				return true;
+			}
+
+
+			// Allocate?
+			if (strcmp(buffer_ptr, ALLOCATE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = ALLOCATE;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
+		
+
+		// Default.
+		default:
+			return false;
 	}
-
-
-	// Close stream.
-	close_file(stream_ptr);
-
-
-	// Free buffer.
-	free(buffer_ptr);
-
-
-	// Checkpoint.
-	printf("\n\nConsumed metadata.\n\n");
-
-
-	// Success.
-	return true;
 }
 
 

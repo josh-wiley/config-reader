@@ -6,8 +6,8 @@
 // Headers.
 #include <stdlib.h>
 #include <string.h>
-#include "./token_definitions/config_tokens.h"
-#include "./token_definitions/metadata_tokens.h"
+#include "./tokens/config_tokens.h"
+#include "./tokens/metadata_tokens.h"
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "../os_init/os_config.h"
