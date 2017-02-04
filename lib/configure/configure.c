@@ -17,7 +17,7 @@ bool add_metadata_descriptor(os_metadata*, char*);
 bool configure_os(char* file_path, os_config* config_ptr)
 {
 	// Get stream.
-	FILE* stream_ptr = open_file(file_path);
+	FILE* stream_ptr = open_file(file_path, "r");
 
 
 	// Buffer.
@@ -74,7 +74,7 @@ bool consume_metadata(os_config* config_ptr)
 
 
 	// Get file stream.
-	FILE* stream_ptr = open_file(buffer_ptr);
+	FILE* stream_ptr = open_file(buffer_ptr, "r");
 
 
 	// Clear metadata.
@@ -617,11 +617,8 @@ bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
 	// Valid descriptor based on code?
 	switch (metadata->code)
 	{
-		// OS?
+		// OS or application?
 		case OS:
-
-
-		// Application?
 		case APPLICATION:
 			// Start?
 			if (strcmp(buffer_ptr, START_DESCRIPTOR) == 0)

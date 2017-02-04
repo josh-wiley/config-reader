@@ -9,8 +9,9 @@
 
 
 // Function Prototypes.
-FILE* open_file(char*);
+FILE* open_file(char*, char*);
 bool read_until(FILE*, char*, size_t, char);
+bool write_line(FILE*, char*);
 bool close_file(FILE*);
 
 

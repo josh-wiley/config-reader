@@ -8,7 +8,7 @@ OFLAGS = -o Sim01
 
 # Executable.
 Sim01: src/Sim01.o lib/file_io/file_io.o lib/configure/configure.o lib/logger/logger.o
-	$(CC) $(LFLAGS) src/Sim01.o lib/file_io/file_io.o lib/configure/configure.o $(OFLAGS)
+	$(CC) $(LFLAGS) src/Sim01.o lib/file_io/file_io.o lib/configure/configure.o lib/logger/logger.o $(OFLAGS)
 
 
 # Main.

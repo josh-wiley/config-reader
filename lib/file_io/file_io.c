@@ -8,10 +8,10 @@
 
 
 // Open file.
-FILE* open_file(char* file_path)
+FILE* open_file(char* file_path, char* mode)
 {
 	// Open file.
-	FILE* file_ptr = fopen(file_path, "r");
+	FILE* file_ptr = fopen(file_path, mode);
 
 
 	// Access unsuccessful?
@@ -28,7 +28,7 @@ FILE* open_file(char* file_path)
 }
 
 
-// Read some.
+// Read until.
 bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
 {
 	// Cannot read?
@@ -109,6 +109,15 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 
 
 	// Done.
+	return true;
+}
+
+
+// Write line.
+bool write_line(FILE* file_ptr, char* buffer_ptr)
+{
+	// TODO: IMPLEMENT
+	// Success.
 	return true;
 }
 

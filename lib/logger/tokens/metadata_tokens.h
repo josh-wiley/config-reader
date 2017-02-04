@@ -4,7 +4,7 @@
 
 
 // Definitions.
-#define METADATA_LOG_START "Configuration File Start"
+#define METADATA_LOG_START "Metadata Metrics"
 #define METADATA_CYCLE_UNITS "ms"
 
 

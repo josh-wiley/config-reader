@@ -4,6 +4,7 @@
 
 
 // Headers.
+#include <stdlib.h>
 #include "os_metadata.h"
 
 
