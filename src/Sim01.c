@@ -32,7 +32,7 @@ int main(int num_args, char** args)
 
 
     // Log config.
-    if (!log_config(&config)) // TODO: FIX METADATA METRICS ERROR (CAUSES LOG TO FAIL)
+    if (!log_config(&config))
     {
         // Abort.
         return 1;

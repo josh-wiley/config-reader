@@ -5,7 +5,7 @@
 
 // Headers.
 #include <stdlib.h>
-#include "os_metadata.h"
+#include "./os_metadata/os_metadata.h"
 
 
 // Definitions.

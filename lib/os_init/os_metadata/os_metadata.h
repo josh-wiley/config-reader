@@ -4,6 +4,8 @@
 
 
 // Headers.
+#include <stdlib.h>
+#include <stdio.h>
 #include "./tokens.h"
 
 
