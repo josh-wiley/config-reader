@@ -385,8 +385,8 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
-			// Add cycles.
-			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
+			// Add cycles (always 0 for OS start and end).
+			config_ptr->metadata[i].cycles = 0;
 
 
 			// Increment number of metadata.

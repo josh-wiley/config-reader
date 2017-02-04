@@ -206,6 +206,13 @@ bool compute_metadata_metrics(os_config* config_ptr, int* cycles_ptr)
 				// Mouse.
 				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->mouse_period_ms;
 				break;
+			
+
+			// Monitor?
+			case MONITOR:
+				// Monitor.
+				cycles_ptr[i] =  config_ptr->metadata[i].cycles * config_ptr->monitor_period_ms;
+				break;
 
 
 			// Speaker?
