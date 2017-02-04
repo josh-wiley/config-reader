@@ -12,7 +12,7 @@ typedef enum { OS, APPLICATION, PROCESS, INPUT, OUTPUT, MEMORY } metadata_code;
 
 
 // Metadata descriptor.
-typedef enum { START, END, RUN, HDD, KEYBOARD, MOUSE, MONITOR, SPEAKER, BLOCK, ALLOCATE } metadata_descriptor;
+typedef enum { START, END, RUN, HDD, KEYBOARD, MOUSE, MONITOR, SPEAKER, PRINTER, BLOCK, ALLOCATE } metadata_descriptor;
 
 
 // Metadata.

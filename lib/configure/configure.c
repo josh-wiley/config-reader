@@ -239,47 +239,160 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 // Is valid descriptor for code?
-bool is_valid_metadata_descriptor(metadata_code code, char* descriptor)
+bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
 {
 	// Valid descriptor based on code?
-	switch (code)
+	switch (metadata->code)
 	{
 		// OS?
 		case OS:
-			return strcmp(descriptor, START_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, END_DESCRIPTOR) == 0;
 
 
 		// Application?
 		case APPLICATION:
-			return strcmp(descriptor, START_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, END_DESCRIPTOR) == 0;
+			// Start?
+			if (strcmp(buffer_ptr, START_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = START;
+				return true;
+			}
+
+
+			// End?
+			if (strcmp(buffer_ptr, END_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = END;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
 
 
 		// Process?
 		case PROCESS:
-			return strcmp(descriptor, RUN_DESCRIPTOR) == 0;
+			// Run?
+			if (strcmp(buffer_ptr, RUN_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = RUN;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
 
 
 		// Input?
 		case INPUT:
-			return strcmp(descriptor, HDD_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, KEYBOARD_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, MOUSE_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, PRINTER_DESCRIPTOR);
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return true;
+			}
+
+
+			// Keyboard?
+			if (strcmp(buffer_ptr, KEYBOARD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = KEYBOARD;
+				return true;
+			}
+
+
+			// Mouse?
+			if (strcmp(buffer_ptr, MOUSE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MOUSE;
+				return true;
+			}
+			
+			
+			// Printer?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
 
 
 		// Output? 
 		case OUTPUT:
-			return strcmp(descriptor, HDD_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, MONITOR_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, SPEAKER_DESCRIPTOR) == 0;
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return true;
+			}
+
+
+			// Monitor?
+			if (strcmp(buffer_ptr, MONITOR_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MONITOR;
+				return true;
+			}
+			
+			
+			// Speaker?
+			if (strcmp(buffer_ptr, SPEAKER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = SPEAKER;
+				return true;
+			}
+
+
+			// Speaker?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
 
 
 		// Memory?
 		case MEMORY:
-			return strcmp(descriptor, BLOCK_DESCRIPTOR) == 0 ||
-				strcmp(descriptor, ALLOCATE_DESCRIPTOR) == 0;
+			// Block?
+			if (strcmp(buffer_ptr, BLOCK_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = BLOCK;
+				return true;
+			}
+
+
+			// Allocate?
+			if (strcmp(buffer_ptr, ALLOCATE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = ALLOCATE;
+				return true;
+			}
+
+
+			// Descriptor DNE.
+			return false;
 		
 
 		// Default.
@@ -310,7 +423,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(OS, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -328,7 +441,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Add cycles.
-			config_ptr->metadata[i].cycles = atoi(buffer_ptr); // TODO: USE PROPER ENUM VALUE
+			config_ptr->metadata[i].cycles = atoi(buffer_ptr);
 
 
 			// Increment number of metadata.
@@ -350,7 +463,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(APPLICATION, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -390,7 +503,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(PROCESS, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -430,7 +543,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(INPUT, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -470,7 +583,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(OUTPUT, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -510,7 +623,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Try to add the descriptor.
-			if (!is_valid_metadata_descriptor(MEMORY, buffer_ptr))
+			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
