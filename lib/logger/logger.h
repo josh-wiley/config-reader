@@ -4,6 +4,7 @@
 
 
 // Headers.
+#include <stdlib.h>
 #include <stdio.h>
 #include "./tokens/config_tokens.h"
 #include "./tokens/metadata_tokens.h"
