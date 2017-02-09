@@ -91,45 +91,31 @@ bool log_to_file(os_config* config_ptr, int* cycles_ptr)
 	// Get stream.
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
 
-
-	// Config start.
-	fprintf(file_ptr, "\n\n%s", CONFIG_LOG_START);
-
-
-	// Processor.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->processor_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Memory.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// HDD.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_HDD_LABEL, config_ptr->hdd_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Keyboard.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_KEYBOARD_LABEL, config_ptr->keyboard_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Mouse.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_MOUSE_LABEL, config_ptr->mouse_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Speaker.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_SPEAKER_LABEL, config_ptr->speaker_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Printer.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_PRINTER_LABEL, config_ptr->printer_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Memory.
-	fprintf(file_ptr, "\n%s %u %s", CONFIG_MEMORY_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Metadata start.
-	fprintf(file_ptr, "\n\n%s", METADATA_LOG_START);
+	// Config.
+	fprintf(file_ptr,
+		"\n\n\
+		%s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		\n\n\
+		%s",
+		CONFIG_LOG_START,
+		CONFIG_PROCESSOR_LABEL, config_ptr->processor_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_PROCESSOR_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_HDD_LABEL, config_ptr->hdd_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_KEYBOARD_LABEL, config_ptr->keyboard_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_MOUSE_LABEL, config_ptr->mouse_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_SPEAKER_LABEL, config_ptr->speaker_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_PRINTER_LABEL, config_ptr->printer_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_MEMORY_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS,
+		METADATA_LOG_START
+	);
 
 
 	// Variables.
@@ -154,10 +140,6 @@ bool log_to_file(os_config* config_ptr, int* cycles_ptr)
 	}
 
 
-	// Done.
-	fprintf(file_ptr, "\n\n");
-
-
 	// Success.
 	return true;
 }
@@ -166,44 +148,31 @@ bool log_to_file(os_config* config_ptr, int* cycles_ptr)
 // Log to display.
 bool log_to_display(os_config* config_ptr, int* cycles_ptr)
 {
-	// Config start.
-	printf("\n\n%s", CONFIG_LOG_START);
-
-
-	// Processor.
-	printf("\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->processor_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Memory.
-	printf("\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// HDD.
-	printf("\n%s %u %s", CONFIG_HDD_LABEL, config_ptr->hdd_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Keyboard.
-	printf("\n%s %u %s", CONFIG_KEYBOARD_LABEL, config_ptr->keyboard_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Mouse.
-	printf("\n%s %u %s", CONFIG_MOUSE_LABEL, config_ptr->mouse_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Speaker.
-	printf("\n%s %u %s", CONFIG_SPEAKER_LABEL, config_ptr->speaker_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Printer.
-	printf("\n%s %u %s", CONFIG_PRINTER_LABEL, config_ptr->printer_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Memory.
-	printf("\n%s %u %s", CONFIG_MEMORY_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
-
-
-	// Metadata start.
-	printf("\n\n%s", METADATA_LOG_START);
+	// Config.
+	printf(
+		"\n\n\
+		%s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		%s %u %s\n\
+		\n\n\
+		%s",
+		CONFIG_LOG_START,
+		CONFIG_PROCESSOR_LABEL, config_ptr->processor_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_PROCESSOR_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_HDD_LABEL, config_ptr->hdd_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_KEYBOARD_LABEL, config_ptr->keyboard_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_MOUSE_LABEL, config_ptr->mouse_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_SPEAKER_LABEL, config_ptr->speaker_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_PRINTER_LABEL, config_ptr->printer_period_ms, CONFIG_CYCLE_UNITS,
+		CONFIG_MEMORY_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS,
+		METADATA_LOG_START
+	);
 
 
 	// Variables.
