@@ -1,7 +1,7 @@
 # Variables.
 CC = gcc
 DEBUG = -g
-CFLAGS = -Wall -c $(DEBUG)
+CFLAGS = -Wall -c $(DEBUG) -std=c99
 LFLAGS = -Wall $(DEBUG)
 OFLAGS = -o Sim01
 
