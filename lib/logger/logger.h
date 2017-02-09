@@ -8,6 +8,7 @@
 #include "./tokens/config_tokens.h"
 #include "./tokens/metadata_tokens.h"
 #include "../bool/bool.h"
+#include "../file_io/file_io.h"
 #include "../os_init/os_config.h"
 
 

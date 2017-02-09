@@ -92,7 +92,70 @@ bool log_to_file(os_config* config_ptr, int* cycles_ptr)
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
 
 
-	// TODO: LOG TO FILE.
+	// Config start.
+	fprintf(file_ptr, "\n\n%s", CONFIG_LOG_START);
+
+
+	// Processor.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->processor_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Memory.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_PROCESSOR_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// HDD.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_HDD_LABEL, config_ptr->hdd_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Keyboard.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_KEYBOARD_LABEL, config_ptr->keyboard_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Mouse.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_MOUSE_LABEL, config_ptr->mouse_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Speaker.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_SPEAKER_LABEL, config_ptr->speaker_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Printer.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_PRINTER_LABEL, config_ptr->printer_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Memory.
+	fprintf(file_ptr, "\n%s %u %s", CONFIG_MEMORY_LABEL, config_ptr->memory_period_ms, CONFIG_CYCLE_UNITS);
+
+
+	// Metadata start.
+	fprintf(file_ptr, "\n\n%s", METADATA_LOG_START);
+
+
+	// Variables.
+	unsigned int total = config_ptr->num_metadata;
+	os_metadata metadata;
+
+	
+	// Log metadata metrics.
+	for (unsigned int i = 0; i < total; i++) 
+	{
+		// Save.
+		metadata = config_ptr->metadata[i];
+
+
+		// Display.
+		fprintf(
+			file_ptr,
+			"\n%c(%s)%u - %u %s",
+			get_code(&metadata), get_descriptor(&metadata), metadata.cycles,
+			cycles_ptr[i], METADATA_CYCLE_UNITS
+		);
+	}
+
+
+	// Done.
+	fprintf(file_ptr, "\n\n");
 
 
 	// Success.

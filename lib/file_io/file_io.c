@@ -113,15 +113,6 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 }
 
 
-// Write line.
-bool write_line(FILE* file_ptr, char* buffer_ptr)
-{
-	// TODO: IMPLEMENT
-	// Success.
-	return true;
-}
-
-
 // Close file.
 bool close_file(FILE* file_ptr)
 {
