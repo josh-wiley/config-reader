@@ -10,7 +10,7 @@
 // Function prototypes.
 bool log_to_file(os_config*, unsigned int*);
 bool log_to_display(os_config*, unsigned int*);
-bool compute_metadata_metrics(os_config*, unsigned int*);
+bool compute_metadata_metrics(os_config*, int*);
 
 
 // Log OS config.

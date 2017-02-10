@@ -10,7 +10,7 @@
 #include "./tokens/metadata_tokens.h"
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
-#include "../os_init/os_config.h"
+#include "../os/os_config.h"
 
 
 // Definitions.

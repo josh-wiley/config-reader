@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/bool/bool.h"
-#include "../lib/os_init/os_config.h"
+#include "../lib/os/os_config.h"
 #include "../lib/configure/configure.h"
 #include "../lib/logger/logger.h"
 

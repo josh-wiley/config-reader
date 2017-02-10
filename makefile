@@ -28,7 +28,7 @@ configure.o:
 
 # OS metadata.
 os_metadata.o:
-	$(CC) $(CFLAGS) lib/os_init/os_metadata/os_metadata.c
+	$(CC) $(CFLAGS) lib/os/os_metadata/os_metadata.c
 
 
 # Logger.
