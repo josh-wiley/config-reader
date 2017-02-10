@@ -6,6 +6,7 @@
 // Headers.
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "./tokens/config_tokens.h"
 #include "./tokens/metadata_tokens.h"
 #include "../bool/bool.h"

@@ -8,9 +8,9 @@
 
 
 // Function prototypes.
-bool log_to_file(os_config*, int*);
-bool log_to_display(os_config*, int*);
-bool compute_metadata_metrics(os_config*, int*);
+bool log_to_file(os_config*, unsigned int*);
+bool log_to_display(os_config*, unsigned int*);
+bool compute_metadata_metrics(os_config*, unsigned int*);
 
 
 // Log OS config.
@@ -18,7 +18,7 @@ bool log_config(os_config* config_ptr)
 {
 	// Variables.
 	bool was_successful = false;
-	int* cycles_per_metadata_ptr = NULL;
+	unsigned int* cycles_per_metadata_ptr = NULL;
 
 
 	// Get the log destination.
@@ -27,7 +27,7 @@ bool log_config(os_config* config_ptr)
 		// Both?
 		case TO_BOTH:
 			// Cycles per metadata item.
-			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata);
+			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata * sizeof(unsigned int));
 
 
 			// Compute metrics and log, store result.
@@ -41,7 +41,7 @@ bool log_config(os_config* config_ptr)
 		// Log to file.
 		case TO_FILE:
 			// Cycles per metadata item.
-			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata);
+			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata * sizeof(unsigned int));
 
 
 			// Compute metrics and log, store result.
@@ -56,6 +56,7 @@ bool log_config(os_config* config_ptr)
 		case TO_DISPLAY:
 			// Cycles per metadata item.
 			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata);
+			memset(cycles_per_metadata_ptr, 0, config_ptr->num_metadata);
 
 
 			// Compute metrics and log, store result.
@@ -86,7 +87,7 @@ bool log_config(os_config* config_ptr)
 
 
 // Log to file.
-bool log_to_file(os_config* config_ptr, int* cycles_ptr)
+bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Get stream.
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
@@ -146,7 +147,7 @@ bool log_to_file(os_config* config_ptr, int* cycles_ptr)
 
 
 // Log to display.
-bool log_to_display(os_config* config_ptr, int* cycles_ptr)
+bool log_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Config.
 	printf(
@@ -206,14 +207,14 @@ bool log_to_display(os_config* config_ptr, int* cycles_ptr)
 
 
 // Compute metadata metrics.
-bool compute_metadata_metrics(os_config* config_ptr, int* cycles_ptr)
+bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Variables.
 	unsigned int max = config_ptr->num_metadata;
 
 
 	// Cycles per metadata.
-	for (unsigned int i = 0; i < max; i++)
+	for (unsigned int i = 0; i < max-1; i++)
 	{
 		// Descriptor?
 		switch (config_ptr->metadata[i].descriptor)

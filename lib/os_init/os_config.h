@@ -33,7 +33,7 @@ typedef struct
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
 	os_metadata metadata[MAX_METADATA];
-	int num_metadata;
+	unsigned int num_metadata;
 } os_config;
 
 
