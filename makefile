@@ -8,7 +8,7 @@ OFLAGS = -o Sim01
 
 # Executable.
 Sim01: Sim01.o file_io.o configure.o logger.o os_metadata.o
-	$(CC) $(LFLAGS) Sim01.o file_io.o configure.o logger.o os_metadata.o $(OFLAGS)
+	$(CC) $(LFLAGS) Sim01.o file_io.o configure.o logger.o os_metadata.o $(OFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -38,4 +38,4 @@ logger.o:
 
 # Clean.
 clean:
-	rm -rf *.o Sim01
+	rm -rf Sim01

@@ -10,7 +10,7 @@
 // Function prototypes.
 bool log_to_file(os_config*, unsigned int*);
 bool log_to_display(os_config*, unsigned int*);
-bool compute_metadata_metrics(os_config*, int*);
+bool compute_metadata_metrics(os_config*, unsigned int*);
 
 
 // Log OS config.
@@ -91,6 +91,7 @@ bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Get stream.
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
+
 
 	// Config.
 	fprintf(file_ptr,
@@ -214,7 +215,7 @@ bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
 
 
 	// Cycles per metadata.
-	for (unsigned int i = 0; i < max-1; i++)
+	for (unsigned int i = 0; i < max; i++)
 	{
 		// Descriptor?
 		switch (config_ptr->metadata[i].descriptor)
