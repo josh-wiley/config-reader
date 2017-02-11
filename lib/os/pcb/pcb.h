@@ -3,6 +3,10 @@
 #define LIB_OS_PCB_H_
 
 
+// Headers.
+#include "../../bool/bool.h"
+
+
 // PCB state.
 typedef enum { START, READY, RUNNING, WAITING, EXIT } pcb_state;
 
