@@ -34,7 +34,6 @@ P(run)1 - 10 ms
 O(printer)5 - 2500 ms
 O(monitor)5 - 125 ms
 O(speaker)2 - 20 ms
-P(run)11 - 110 ms
 P(run)14 - 140 ms
 A(end)0 - 0 ms
 S(end)0 - 0 ms

@@ -11,6 +11,7 @@
 bool map_to_config(char*, FILE*, os_config*);
 bool add_metadata(os_config*, char*, FILE*);
 bool add_metadata_descriptor(os_metadata*, char*);
+bool get_memory_unit_multiplier(char*, unsigned int*);
 
 
 // Configure OS.
@@ -160,6 +161,38 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		// Save.
 		config_ptr->memory_period_ms = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// System memory attribute?
+	else if (strstr(buffer_ptr, SYSTEM_MEMORY_ATTRIBUTE))
+	{
+		// Conversion multiplier.
+		unsigned int multiplier;
+
+
+		// Units?
+		if (!get_memory_unit_multiplier(buffer_ptr, &multiplier))
+		{
+			// Alert.
+			printf("\n\nSYSTEM MEMORY ERROR: Invalid units\n\n");
+
+
+			// Abort.
+			return false;
+		}
+
+
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		config_ptr->system_memory_bytes = multiplier * atoi(buffer_ptr);
 
 
 		// Success.
@@ -769,6 +802,116 @@ bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
 		default:
 			return false;
 	}
+}
+
+
+// Get memory unit multiplier.
+bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
+{
+	// Counter.
+	unsigned int i = 0;
+	char item = buffer_ptr[i];
+
+
+	// Ignore up to start delimiter.
+	while (item != '(')
+	{
+		// End of buffer?
+		if (item == 0 || i == 64)
+		{
+			// Abort.
+			return false;
+		}
+
+
+		// Advance.
+		item = buffer_ptr[++i];
+	}
+
+
+	// Discard start delimiter.
+	item = buffer_ptr[++i];
+
+
+	// Unit token buffer.
+	char* unit_token_ptr = malloc(64);
+	memset(unit_token_ptr, 0, 64);
+
+
+	// Unit token buffer index.
+	unsigned int j = 0;
+
+
+	// Copy unit token.
+	while (item != ')')
+	{
+		// End of buffer?
+		if (item == 0 || i == 64)
+		{
+			// Free.
+			free(unit_token_ptr);
+
+
+			// Abort.
+			return false;
+		}
+
+
+		// Save.
+		unit_token_ptr[j++] = item;
+		
+
+		// Advance.
+		item = buffer_ptr[++i];
+	}
+
+
+	// KB?
+	if (strcmp(unit_token_ptr, SYSTEM_MEMORY_KB_UNIT) == 0)
+	{
+		// Set.
+		*multiplier_ptr = 1024;
+	}
+
+
+	// MB?
+	else if (strcmp(unit_token_ptr, SYSTEM_MEMORY_MB_UNIT) == 0)
+	{
+		// Set.
+		*multiplier_ptr = 1048576;
+	}
+
+
+	// GB?
+	else if (strcmp(unit_token_ptr, SYSTEM_MEMORY_GB_UNIT) == 0)
+	{
+		// Set.
+		*multiplier_ptr = 1073741824;
+	}
+
+
+	// No match.
+	else
+	{
+		// TODO: REMOVE
+		printf("\n\n%s\n\n", unit_token_ptr);
+
+
+		// Free.
+		free(unit_token_ptr);
+
+
+		// Abort.
+		return false;
+	}
+
+
+	// Free.
+	free(unit_token_ptr);
+
+
+	// Success.
+	return true;
 }
 
 

@@ -32,6 +32,7 @@ typedef struct
 	unsigned int printer_period_ms;
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
+	unsigned int system_memory_bytes;
 	os_metadata metadata[MAX_METADATA];
 	unsigned int num_metadata;
 } os_config;
