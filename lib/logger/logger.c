@@ -93,6 +93,14 @@ bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
 
 
+	// File stream not obtained?
+	if (!file_ptr)
+	{
+		// Abort.
+		return false;
+	}
+
+
 	// Config.
 	fprintf(file_ptr,
 		"\n\n\
