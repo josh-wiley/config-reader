@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_OS_PCB_H_
-#define LIB_OS_PCB_H_
+#ifndef LIB_OS_PCB_C_
+#define LIB_OS_PCB_C_
 
 
 // Header.

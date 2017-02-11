@@ -48,4 +48,4 @@ logger.o:
 
 # Clean.
 clean:
-	rm -rf Sim01
+	rm -rf *.o Sim01
