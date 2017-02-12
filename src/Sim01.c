@@ -9,6 +9,7 @@
 #include "../lib/bool/bool.h"
 #include "../lib/os/os_config.h"
 #include "../lib/configure/configure.h"
+#include "../lib/os/os_program_sim/program_sim.h"
 #include "../lib/logger/logger.h"
 
 
@@ -31,8 +32,13 @@ int main(int num_args, char** args)
     }
 
 
-    // Log config.
-    if (!log_config(&config))
+    // Program results buffer.
+    char* results_buffer_ptr = malloc(2048);
+    memset(results_buffer_ptr, 0, 2048);
+
+
+    // Run program metadata.
+    if (!sim_prog(config.metadata, results_buffer_ptr))
     {
         // Abort.
         return 1;
