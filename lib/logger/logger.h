@@ -11,7 +11,7 @@
 #include "./tokens/metadata_tokens.h"
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
-#include "../os/os_config.h"
+#include "../os/config/os_config.h"
 
 
 // Function prototypes.

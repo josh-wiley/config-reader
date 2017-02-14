@@ -130,7 +130,7 @@ bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 
 	// Variables.
 	unsigned int total = config_ptr->num_metadata;
-	os_metadata metadata;
+	prog_metadata metadata;
 
 	
 	// Log metadata metrics.
@@ -187,7 +187,7 @@ bool log_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 
 	// Variables.
 	unsigned int total = config_ptr->num_metadata;
-	os_metadata metadata;
+	prog_metadata metadata;
 
 	
 	// Log metadata metrics.

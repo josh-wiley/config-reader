@@ -7,8 +7,8 @@ OFLAGS = -o Sim01
 
 
 # Executable.
-Sim01: Sim01.o file_io.o configure.o logger.o os_metadata.o program_sim.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim01.o file_io.o configure.o logger.o os_metadata.o program_sim.o pcb.o mem_alloc.o $(OFLAGS) && rm -rf *.o
+Sim01: Sim01.o file_io.o configure.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim01.o file_io.o configure.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -27,8 +27,8 @@ configure.o:
 
 
 # OS metadata.
-os_metadata.o:
-	$(CC) $(CFLAGS) lib/os/os_metadata/os_metadata.c
+prog_metadata.o:
+	$(CC) $(CFLAGS) lib/os/prog_metadata/prog_metadata.c
 
 
 # Process control block.
@@ -37,8 +37,9 @@ pcb.o:
 
 
 # Program simulator.
-program_sim.o:
-	$(CC) $(CFLAGS) lib/os/os_program_sim/program_sim.c
+prog_exec.o:
+	$(CC) $(CFLAGS) lib/os/prog_exec/prog_exec.c
+
 
 # Memory allocator.
 mem_alloc.o:

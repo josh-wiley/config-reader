@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_OS_METADATA_H_
-#define LIB_OS_METADATA_H_
+#ifndef LIB_OS_PROG_METADATA_H_
+#define LIB_OS_PROG_METADATA_H_
 
 
 // Headers.
@@ -27,12 +27,12 @@ typedef struct
 	metadata_code code;
 	metadata_descriptor descriptor;
 	unsigned int cycles;
-} os_metadata;
+} prog_metadata;
 
 
 // Function prototypes.
-char get_code(os_metadata*);
-char* get_descriptor(os_metadata*);
+char get_code(prog_metadata*);
+char* get_descriptor(prog_metadata*);
 
 
 // End header guard.

@@ -5,7 +5,7 @@
 
 // Headers.
 #include <stdlib.h>
-#include "./os_metadata/os_metadata.h"
+#include "../prog_metadata/prog_metadata.h"
 
 
 // Definitions.
@@ -33,7 +33,7 @@ typedef struct
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
 	unsigned int system_memory_bytes;
-	os_metadata metadata[MAX_METADATA];
+	prog_metadata metadata[MAX_METADATA];
 	unsigned int num_metadata;
 } os_config;
 

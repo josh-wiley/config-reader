@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_OS_METADATA_TOKENS_H_
-#define LIB_OS_METADATA_TOKENS_H_
+#ifndef LIB_OS_PROG_METADATA_TOKENS_H_
+#define LIB_OS_PROG_METADATA_TOKENS_H_
 
 
 // Definitions.

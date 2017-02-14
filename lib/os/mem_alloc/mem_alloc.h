@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_MEM_ALLOC_H_
-#define LIB_MEM_ALLOC_H_
+#ifndef LIB_OS_MEM_ALLOC_H_
+#define LIB_OS_MEM_ALLOC_H_
 
 
 // Headers.

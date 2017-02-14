@@ -1,14 +1,14 @@
 // Header guard.
-#ifndef LIB_OS_METADATA_C_
-#define LIB_OS_METADATA_C_
+#ifndef LIB_OS_PROG_METADATA_C_
+#define LIB_OS_PROG_METADATA_C_
 
 
 // Header.
-#include "os_metadata.h"
+#include "prog_metadata.h"
 
 
 // Get code.
-char get_code(os_metadata* metadata_ptr)
+char get_code(prog_metadata* metadata_ptr)
 {
 	// Which code?
 	switch (metadata_ptr->code)
@@ -46,7 +46,7 @@ char get_code(os_metadata* metadata_ptr)
 
 
 // Get descriptor.
-char* get_descriptor(os_metadata* metadata_ptr)
+char* get_descriptor(prog_metadata* metadata_ptr)
 {
 	// Which descriptor?
 	switch (metadata_ptr->descriptor)

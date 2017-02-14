@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/bool/bool.h"
-#include "../lib/os/os_config.h"
+#include "../lib/os/config/os_config.h"
 #include "../lib/configure/configure.h"
-#include "../lib/os/os_program_sim/program_sim.h"
+#include "../lib/os/prog_exec/prog_exec.h"
 #include "../lib/logger/logger.h"
 
 
@@ -33,12 +33,12 @@ int main(int num_args, char** args)
 
 
     // Program results buffer.
-    char* results_buffer_ptr = malloc(2048);
-    memset(results_buffer_ptr, 0, 2048);
+    char* results_buffer_ptr = malloc(PROG_RESULTS_BUFFER_SIZE);
+    memset(results_buffer_ptr, 0, PROG_RESULTS_BUFFER_SIZE);
 
 
     // Run program metadata.
-    if (!sim_prog(config.metadata, results_buffer_ptr))
+    if (!exec(config.metadata, results_buffer_ptr, PROG_RESULTS_BUFFER_SIZE))
     {
         // Abort.
         return 1;

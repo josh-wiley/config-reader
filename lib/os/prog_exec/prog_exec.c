@@ -1,14 +1,14 @@
 // Header guard.
-#ifndef LIB_OS_PROGRAM_SIM_C_
-#define LIB_OS_PROGRAM_SIM_C_
+#ifndef LIB_OS_PROG_EXEC_C_
+#define LIB_OS_PROG_EXEC_C_
 
 
 // Header.
-#include "program_sim.h"
+#include "prog_exec.h"
 
 
-// Run program sim.
-bool sim_prog(os_metadata* metadata_ptr, char* results_ptr)
+// Execute program.
+bool exec(prog_metadata* metadata_ptr, char* buffer_ptr, long buffer_size)
 {
 	// Get start time.
 	clock_t start_time = clock();

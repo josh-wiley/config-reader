@@ -10,7 +10,7 @@
 // Function prototypes.
 bool map_to_config(char*, FILE*, os_config*);
 bool add_metadata(os_config*, char*, FILE*);
-bool add_metadata_descriptor(os_metadata*, char*);
+bool add_metadata_descriptor(prog_metadata*, char*);
 bool get_memory_unit_multiplier(char*, unsigned int*);
 
 
@@ -645,7 +645,7 @@ bool add_metadata(os_config* config_ptr, char* buffer_ptr, FILE* stream_ptr)
 
 
 // Is valid descriptor for code?
-bool add_metadata_descriptor(os_metadata* metadata, char* buffer_ptr)
+bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 {
 	// Valid descriptor based on code?
 	switch (metadata->code)
