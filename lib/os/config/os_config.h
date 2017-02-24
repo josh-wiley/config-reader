@@ -5,12 +5,10 @@
 
 // Headers.
 #include <stdlib.h>
-#include "../prog_metadata/prog_metadata.h"
 
 
 // Definitions.
 #define STRING_SIZE (size_t) 128
-#define MAX_METADATA (size_t) 512
 
 
 // Log destination.
@@ -33,8 +31,6 @@ typedef struct
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
 	unsigned int system_memory_bytes;
-	prog_metadata metadata[MAX_METADATA];
-	unsigned int num_metadata;
 } os_config;
 
 

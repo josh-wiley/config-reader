@@ -16,6 +16,8 @@
 
 // Function prototypes.
 bool log_config(os_config*);
+bool log_metadata_begin_op(char*, prog_metadata*, double);
+bool log_metadata_end_op(char*, prog_metadata*, double);
 
 
 // End header guard.

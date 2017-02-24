@@ -4,16 +4,22 @@ DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG) -std=c11
 LFLAGS = -Wall $(DEBUG)
 OFLAGS = -o Sim01
+TFLAGS = -pthread
 
 
 # Executable.
-Sim01: Sim01.o file_io.o configure.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim01.o file_io.o configure.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) && rm -rf *.o
+Sim01: Sim01.o os.o file_io.o configure.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim01.o os.o file_io.o configure.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) && rm -rf *.o
 
 
 # Main.
 Sim01.o:
 	$(CC) $(CFLAGS) src/Sim01.c
+
+
+# OS.
+os.o:
+	$(CC) $(CFLAGS) lib/os/os.c
 
 
 # File reader library.
@@ -38,17 +44,12 @@ pcb.o:
 
 # Program simulator.
 prog_exec.o:
-	$(CC) $(CFLAGS) lib/os/prog_exec/prog_exec.c
+	$(CC) $(CFLAGS) lib/os/prog_exec/prog_exec.c $(TFLAGS)
 
 
 # Memory allocator.
 mem_alloc.o:
 	$(CC) $(CFLAGS) lib/os/mem_alloc/mem_alloc.c
-
-
-# Logger.
-logger.o:
-	$(CC) $(CFLAGS) lib/logger/logger.c
 
 
 # Clean.

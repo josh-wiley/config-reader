@@ -8,8 +8,12 @@
 
 
 // Function prototypes.
-bool log_to_file(os_config*, unsigned int*);
-bool log_to_display(os_config*, unsigned int*);
+bool log_config_to_file(os_config*, unsigned int*);
+bool log_config_to_display(os_config*, unsigned int*);
+bool log_metadata_begin_op_to_file(char*, prog_metadata*, double);
+bool log_metadata_end_op_to_file(char*, prog_metadata*, double);
+bool log_metadata_begin_op_to_display(prog_metadata*, double);
+bool log_metadata_end_op_to_display(prog_metadata*, double);
 bool compute_metadata_metrics(os_config*, unsigned int*);
 
 
@@ -31,7 +35,7 @@ bool log_config(os_config* config_ptr)
 
 
 			// Compute metrics and log, store result.
-			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_to_file(config_ptr, cycles_per_metadata_ptr) && log_to_display(config_ptr, cycles_per_metadata_ptr);
+			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_config_to_file(config_ptr, cycles_per_metadata_ptr) && log_to_display(config_ptr, cycles_per_metadata_ptr);
 			
 			
 			// Done.
@@ -45,7 +49,7 @@ bool log_config(os_config* config_ptr)
 
 
 			// Compute metrics and log, store result.
-			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_to_file(config_ptr, cycles_per_metadata_ptr);
+			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_config_to_file(config_ptr, cycles_per_metadata_ptr);
 			
 			
 			// Done.
@@ -86,8 +90,76 @@ bool log_config(os_config* config_ptr)
 }
 
 
+// Log metadata begin operation.
+bool log_metadata_begin_op(char* log_path, prog_metadata* metadata_ptr, double elapsed_time)
+{
+	// Switch on log destination.
+	switch (config_ptr->log_dest)
+	{
+		// Both?
+		case TO_BOTH:
+			// Log to both.
+			return log_metadata_begin_op_to_display(metadata_ptr, elapsed_time) &&
+				log_metadata_begin_op_to_file(log_path, metadata_ptr, elapsed_time);
+		
+
+		// Log to file.
+		case TO_FILE:
+			// Log to file.
+			return log_metadata_begin_op_to_file(log_path, metadata_ptr, elapsed_time);
+		
+
+		// Log to display.
+		case TO_DISPLAY:
+			// Log to display.
+			return log_metadata_begin_op_to_display(metadata_ptr, elapsed_time);
+		
+
+		// Default.
+		default:
+			// Abort.
+			printf("\n\nInvalid log destination in OS config.\n\n");
+			return false;
+	}
+}
+
+
+// Log metadata end operation.
+bool log_metadata_end_op(char* log_path, prog_metadata* metadata_ptr, double elapsed_time)
+{
+	// Switch on log destination.
+	switch (config_ptr->log_dest)
+	{
+		// Both?
+		case TO_BOTH:
+			// Log to both.
+			return log_metadata_end_op_to_display(metadata_ptr, elapsed_time) &&
+				log_metadata_end_op_to_file(log_path, metadata_ptr, elapsed_time);
+		
+
+		// Log to file.
+		case TO_FILE:
+			// Log to file.
+			return log_metadata_end_op_to_file(log_path, metadata_ptr, elapsed_time);
+		
+
+		// Log to display.
+		case TO_DISPLAY:
+			// Log to display.
+			return log_metadata_end_op_to_display(metadata_ptr, elapsed_time);
+		
+
+		// Default.
+		default:
+			// Abort.
+			printf("\n\nInvalid log destination in OS config.\n\n");
+			return false;
+	}
+}
+
+
 // Log to file.
-bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
+bool log_config_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Get stream.
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
@@ -156,7 +228,7 @@ bool log_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 
 
 // Log to display.
-bool log_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
+bool log_config_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 {
 	// Config.
 	printf(
@@ -213,6 +285,69 @@ bool log_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 	// Success.
 	return true;
 }
+
+
+// Log metadata begin operation to file.
+bool log_metadata_begin_op_to_file(char* log_path, prog_metadata* metadata_ptr, double elapsed_time)
+{
+	// Switch on op code.
+	switch (metadata_ptr->get_code())
+	{
+		// OS.
+		case OS:
+			// Switch on descriptor.
+			switch (metadata_ptr->get_descriptor())
+			{
+				// Start.
+				case START:
+					return -1;
+
+
+				// End.
+				case END:
+					return -1;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\nInvalid metadata descriptor found at run-time.\n\n");
+					return -1;
+			}
+
+
+		// Application.
+		case APPLICATION:
+			return -1;
+		
+
+		// Process.
+		case PROCESS:
+			return -1;
+		
+
+		// Default.
+		default:
+			// Abort.
+			printf("\n\nInvalid metadata code found at run-time.\n\n");
+			return -1;
+	}
+}
+
+
+// Log metadata end operation to file.
+bool log_metadata_end_op_to_file(prog_metadata*, double)
+{}
+
+
+// Log metadata begin operation to display.
+bool log_metadata_begin_op_to_display(prog_metadata*, double)
+{}
+
+
+// Log metadata end operation to display.
+bool log_metadata_end_op_to_display(prog_metadata*, double)
+{}
 
 
 // Compute metadata metrics.
