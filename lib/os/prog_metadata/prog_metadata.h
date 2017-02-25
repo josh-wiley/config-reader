@@ -6,7 +6,7 @@
 // Headers.
 #include <stdlib.h>
 #include <stdio.h>
-#include "./tokens.h"
+#include "tokens.h"
 
 
 // Definitions.

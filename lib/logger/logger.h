@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "./tokens/config_tokens.h"
-#include "./tokens/metadata_tokens.h"
+#include "tokens/config_tokens.h"
+#include "tokens/metadata_tokens.h"
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "../os/config/os_config.h"

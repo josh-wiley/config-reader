@@ -4,7 +4,7 @@
 
 
 // Headers.
-#include "stdio.h"
+#include <stdio.h>
 #include "../bool/bool.h"
 
 

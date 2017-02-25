@@ -8,9 +8,9 @@
 #include <string.h>
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
-#include "./config/os_config.h"
-#include "./pcb/pcb.h"
-#include "./config_tokens.h"
+#include "config/os_config.h"
+#include "pcb/pcb.h"
+#include "config_tokens.h"
 
 
 // Definitions.
