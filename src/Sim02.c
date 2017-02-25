@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/bool/bool.h"
-#include "../lib/configure/configure.h"
+#include "../lib/os/os.h"
 #include "../lib/os/prog_exec/prog_exec.h"
 
 
@@ -23,7 +23,7 @@ int main(int num_args, char** args)
 
 
     // Configure OS.
-    if (!configure_os(file_path, &os))
+    if (!configure(&os, file_path))
     {
         // Abort.
         return 1;

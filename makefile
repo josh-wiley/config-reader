@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim02: Sim02.o os.o file_io.o logger.o configure.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim02.o os.o file_io.o logger.o configure.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim02: Sim02.o os.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim02.o os.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -30,11 +30,6 @@ file_io.o:
 # Logger.
 logger.o:
 	$(CC) $(CFLAGS) lib/logger/logger.c
-
-
-# OS configuration.
-configure.o:
-	$(CC) $(CFLAGS) lib/configure/configure.c
 
 
 # OS metadata.
