@@ -9,7 +9,7 @@
 
 // Function prototypes.
 unsigned int get_op_time(os_config*, prog_metadata*);
-void ms_sleep(unsigned int);
+void* ms_sleep(void*);
 
 
 // Execute program.
@@ -44,7 +44,7 @@ bool exec(os* os_ptr)
 
 
 	// Time to wait (microseconds) and start clock.
-	unsigned int* wait_time_ms_ptr;
+	unsigned int wait_time_ms = 0;
 	clock_t start_clock = clock();
 
 
@@ -69,7 +69,7 @@ bool exec(os* os_ptr)
 
 
 		// Calculate total time.
-		*wait_time_ms_ptr = get_op_time(&os_ptr->config, &metadata_ptr[i]);
+		wait_time_ms = get_op_time(&os_ptr->config, &metadata_ptr[i]);
 
 
 		// Set PCB state.
@@ -84,15 +84,15 @@ bool exec(os* os_ptr)
 
 
 			// Thread / sync.
-			pthread_create(thread_id_ptr, NULL, ms_sleep, (void*) wait_time_ms_ptr);
+			pthread_create(thread_id_ptr, NULL, ms_sleep, (void*) &wait_time_ms);
 			pthread_join(*thread_id_ptr, &thread_status_ptr);
 		}
 
 
 		// CPU?
-		else if (*wait_time_ms_ptr > 0) {
+		else if (wait_time_ms > 0) {
 			// Sleep.
-			ms_sleep(*wait_time_ms_ptr);
+			ms_sleep((void*) &wait_time_ms);
 		}
 
 
@@ -185,10 +185,18 @@ unsigned int get_op_time(os_config* config_ptr, prog_metadata* metadata_ptr)
 
 
 // Sleep for ms.
-void ms_sleep(unsigned int ms)
+void* ms_sleep(void* arg_ptr)
 {
+	// Unwrap.
+	unsigned int* ms_ptr = (unsigned int*) arg_ptr;
+
+
 	// Sleep.
-	usleep(ms * 1000);
+	usleep(*ms_ptr * 1000);
+
+
+	// Done.
+	return NULL;
 }
 
 

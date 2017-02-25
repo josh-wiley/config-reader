@@ -377,7 +377,7 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 			if (metadata_ptr->descriptor == RUN)
 			{
 				// Log.
-				fprintf(file_ptr, "\n\n%f - &s\n\n", elapsed_time, PROCESS_RUN_OP_BEGIN_MESSAGE);
+				fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_BEGIN_MESSAGE);
 				return true;
 			}
 
