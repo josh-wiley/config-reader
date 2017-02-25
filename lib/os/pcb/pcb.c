@@ -8,7 +8,6 @@
 
 
 // Function prototypes.
-bool consume_metadata(pcb*);
 bool add_metadata(pcb*, char*, FILE*);
 bool add_metadata_descriptor(prog_metadata*, char*);
 

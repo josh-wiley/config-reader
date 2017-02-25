@@ -59,7 +59,6 @@ bool exec(os* os_ptr)
 		// Set PCB state.
 		set_state(pcb_ptr, READY);
 
-
 		// Log begin operation.
 		log_metadata_begin_op(
 			config_ptr,
@@ -94,7 +93,6 @@ bool exec(os* os_ptr)
 			// Sleep.
 			ms_sleep((void*) &wait_time_ms);
 		}
-
 
 		// Log end operation.
 		log_metadata_end_op(
@@ -192,7 +190,7 @@ void* ms_sleep(void* arg_ptr)
 
 
 	// Sleep.
-	usleep(*ms_ptr * 1000);
+	usleep(*ms_ptr);
 
 
 	// Done.

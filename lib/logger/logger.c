@@ -8,17 +8,18 @@
 
 
 // Function prototypes.
-//bool log_config_to_file(os_config*, unsigned int*);
-//bool log_config_to_display(os_config*, unsigned int*);
+bool log_os_to_file(os*, unsigned int*);
+bool log_os_to_display(os*, unsigned int*);
 bool log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
 bool log_metadata_end_op_to_file(FILE*, os_config*, prog_metadata*, double);
 bool log_metadata_begin_op_to_display(prog_metadata*, double);
 bool log_metadata_end_op_to_display(os_config*, prog_metadata*, double);
-//bool compute_metadata_metrics(os_config*, unsigned int*);
+bool compute_metadata_metrics(os*, unsigned int*);
 
-/*
+
+
 // Log OS config.
-bool log_config(os_config* config_ptr)
+bool log_os(os* os_ptr)
 {
 	// Variables.
 	bool was_successful = false;
@@ -26,16 +27,16 @@ bool log_config(os_config* config_ptr)
 
 
 	// Get the log destination.
-	switch (config_ptr->log_dest)
+	switch (os_ptr->config.log_dest)
 	{
 		// Both?
 		case TO_BOTH:
 			// Cycles per metadata item.
-			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata * sizeof(unsigned int));
+			cycles_per_metadata_ptr = malloc(os_ptr->pcb.num_metadata * sizeof(unsigned int));
 
 
 			// Compute metrics and log, store result.
-			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_config_to_file(config_ptr, cycles_per_metadata_ptr) && log_to_display(config_ptr, cycles_per_metadata_ptr);
+			was_successful = compute_metadata_metrics(os_ptr, cycles_per_metadata_ptr) && log_os_to_file(os_ptr, cycles_per_metadata_ptr) && log_os_to_display(os_ptr, cycles_per_metadata_ptr);
 			
 			
 			// Done.
@@ -45,11 +46,11 @@ bool log_config(os_config* config_ptr)
 		// Log to file.
 		case TO_FILE:
 			// Cycles per metadata item.
-			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata * sizeof(unsigned int));
+			cycles_per_metadata_ptr = malloc(os_ptr->pcb.num_metadata * sizeof(unsigned int));
 
 
 			// Compute metrics and log, store result.
-			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_config_to_file(config_ptr, cycles_per_metadata_ptr);
+			was_successful = compute_metadata_metrics(os_ptr, cycles_per_metadata_ptr) && log_os_to_file(os_ptr, cycles_per_metadata_ptr);
 			
 			
 			// Done.
@@ -59,12 +60,12 @@ bool log_config(os_config* config_ptr)
 		// Log to display.
 		case TO_DISPLAY:
 			// Cycles per metadata item.
-			cycles_per_metadata_ptr = malloc(config_ptr->num_metadata);
-			memset(cycles_per_metadata_ptr, 0, config_ptr->num_metadata);
+			cycles_per_metadata_ptr = malloc(os_ptr->pcb.num_metadata);
+			memset(cycles_per_metadata_ptr, 0, os_ptr->pcb.num_metadata);
 
 
 			// Compute metrics and log, store result.
-			was_successful = compute_metadata_metrics(config_ptr, cycles_per_metadata_ptr) && log_to_display(config_ptr, cycles_per_metadata_ptr);
+			was_successful = compute_metadata_metrics(os_ptr, cycles_per_metadata_ptr) && log_os_to_display(os_ptr, cycles_per_metadata_ptr);
 			
 			
 			// Done.
@@ -88,7 +89,7 @@ bool log_config(os_config* config_ptr)
 	// Return.
 	return was_successful;
 }
-*/
+
 
 // Log metadata begin operation.
 bool log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
@@ -182,10 +183,13 @@ bool log_metadata_end_op(os_config* config_ptr, prog_metadata* metadata_ptr, dou
 }
 
 
-/*
 // Log to file.
-bool log_config_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
+bool log_os_to_file(os* os_ptr, unsigned int* cycles_ptr)
 {
+	// Convenience.
+	os_config* config_ptr = &os_ptr->config;
+
+
 	// Get stream.
 	FILE* file_ptr = open_file(config_ptr->log_file_path, "w");
 
@@ -226,7 +230,8 @@ bool log_config_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 
 
 	// Variables.
-	unsigned int total = config_ptr->num_metadata;
+	prog_metadata* metadata_ptr = os_ptr->pcb.metadata;
+	unsigned int total = os_ptr->pcb.num_metadata;
 	prog_metadata metadata;
 
 	
@@ -234,7 +239,7 @@ bool log_config_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 	for (unsigned int i = 0; i < total; i++) 
 	{
 		// Save.
-		metadata = config_ptr->metadata[i];
+		metadata = metadata_ptr[i];
 
 
 		// Display.
@@ -250,13 +255,16 @@ bool log_config_to_file(os_config* config_ptr, unsigned int* cycles_ptr)
 	// Success.
 	return true;
 }
-*/
 
 
-/*
+
 // Log to display.
-bool log_config_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
+bool log_os_to_display(os* os_ptr, unsigned int* cycles_ptr)
 {
+	// Convenience.
+	os_config* config_ptr = &os_ptr->config;
+
+
 	// Config.
 	printf(
 		"\n\n\
@@ -285,7 +293,8 @@ bool log_config_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 
 
 	// Variables.
-	unsigned int total = config_ptr->num_metadata;
+	prog_metadata* metadata_ptr = os_ptr->pcb.metadata;
+	unsigned int total = os_ptr->pcb.num_metadata;
 	prog_metadata metadata;
 
 	
@@ -293,7 +302,7 @@ bool log_config_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 	for (unsigned int i = 0; i < total; i++) 
 	{
 		// Save.
-		metadata = config_ptr->metadata[i];
+		metadata = metadata_ptr[i];
 
 
 		// Display.
@@ -312,7 +321,6 @@ bool log_config_to_display(os_config* config_ptr, unsigned int* cycles_ptr)
 	// Success.
 	return true;
 }
-*/
 
 
 // Log metadata begin operation to file.
@@ -1180,19 +1188,18 @@ bool log_metadata_end_op_to_display(os_config* config_ptr, prog_metadata* metada
 }
 
 
-/*
 // Compute metadata metrics.
-bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
+bool compute_metadata_metrics(os* os_ptr, unsigned int* cycles_ptr)
 {
 	// Variables.
-	unsigned int max = config_ptr->num_metadata;
+	unsigned int max = os_ptr->pcb.num_metadata;
 
 
 	// Cycles per metadata.
 	for (unsigned int i = 0; i < max; i++)
 	{
 		// Descriptor?
-		switch (config_ptr->metadata[i].descriptor)
+		switch (os_ptr->pcb.metadata[i].descriptor)
 		{
 			// Start or end?
 			case START:
@@ -1205,7 +1212,7 @@ bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
 			// Run?
 			case RUN:
 				// Processor.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->processor_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.processor_period_ms;
 				break;
 
 
@@ -1213,49 +1220,49 @@ bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
 			case ALLOCATE:
 			case BLOCK:
 				// Memory.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->memory_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.memory_period_ms;
 				break;
 
 
 			// HDD?
 			case HDD:
 				// HDD.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->hdd_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.hdd_period_ms;
 				break;
 
 
 			// Keyboard?
 			case KEYBOARD:
 				// Keyboard.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->keyboard_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.keyboard_period_ms;
 				break;
 
 
 			// Mouse?
 			case MOUSE:
 				// Mouse.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->mouse_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.mouse_period_ms;
 				break;
 			
 
 			// Monitor?
 			case MONITOR:
 				// Monitor.
-				cycles_ptr[i] =  config_ptr->metadata[i].cycles * config_ptr->monitor_period_ms;
+				cycles_ptr[i] =  os_ptr->pcb.metadata[i].cycles * os_ptr->config.monitor_period_ms;
 				break;
 
 
 			// Speaker?
 			case SPEAKER:
 				// Speaker.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->speaker_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.speaker_period_ms;
 				break;
 
 
 			// Printer?
 			case PRINTER:
 				// Printer.
-				cycles_ptr[i] = config_ptr->metadata[i].cycles * config_ptr->printer_period_ms;
+				cycles_ptr[i] = os_ptr->pcb.metadata[i].cycles * os_ptr->config.printer_period_ms;
 				break;
 
 
@@ -1274,7 +1281,6 @@ bool compute_metadata_metrics(os_config* config_ptr, unsigned int* cycles_ptr)
 	// Success.
 	return true;
 }
-*/
 
 
 // End header guard.

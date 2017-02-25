@@ -406,10 +406,6 @@ bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 	// No match.
 	else
 	{
-		// TODO: REMOVE
-		printf("\n\n%s\n\n", unit_token_ptr);
-
-
 		// Free.
 		free(unit_token_ptr);
 
