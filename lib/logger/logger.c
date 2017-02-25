@@ -300,19 +300,21 @@ bool log_metadata_begin_op_to_file(char* log_path, prog_metadata* metadata_ptr, 
 			{
 				// Start.
 				case START:
-					return -1;
+					printf("\n\n%s\n\n", OS_START_OP_BEGIN_MESSAGE);
+					return true;
 
 
 				// End.
 				case END:
-					return -1;
+					printf("\n\n%s\n\n", OS_END_OP_BEGIN_MESSAGE);
+					return true;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\nInvalid metadata descriptor found at run-time.\n\n");
-					return -1;
+					return false;
 			}
 
 

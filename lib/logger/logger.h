@@ -12,6 +12,7 @@
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "../os/config/os_config.h"
+#include "../os/prog_metadata/prog_metadata.h"
 
 
 // Function prototypes.

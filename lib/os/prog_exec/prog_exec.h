@@ -4,7 +4,7 @@
 
 
 // Definitions.
-#define BUFFER_SIZE 256
+#define FILE_PATH_BUFFER_SIZE 256
 #define PROG_RESULTS_BUFFER_SIZE 100000
 
 
@@ -12,12 +12,16 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include "metadata_tokens.h"
+#include <pthread.h>
 #include "../../bool/bool.h"
 #include "../../file_io/file_io.h"
 #include "../../logger/logger.h"
 #include "../os.h"
 #include "../mem_alloc/mem_alloc.h"
+
+
+// Definitions.
+#define METADATA_FOLDER_PATH "./conf/"
 
 
 // Function prototypes.

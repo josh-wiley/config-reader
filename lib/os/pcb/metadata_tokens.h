@@ -4,7 +4,6 @@
 
 
 // Definitions.
-#define METADATA_FOLDER_PATH "./conf/"
 #define METADATA_CODE_TERMINATOR '('
 #define METADATA_DESCRIPTOR_TERMINATOR ')'
 #define METADATA_CYCLES_TERMINATOR ';'

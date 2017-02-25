@@ -8,8 +8,8 @@
 
 
 // Function prototypes.
-bool consume_metadata(os_config*);
-bool add_metadata(os_config*, char*, FILE*);
+bool consume_metadata(pcb*);
+bool add_metadata(pcb*, char*, FILE*);
 bool add_metadata_descriptor(prog_metadata*, char*);
 
 
@@ -21,8 +21,8 @@ bool init(pcb* this, char* mdf_file_path)
 
 
 	// Buffer.
-	char* buffer_ptr = malloc(BUFFER_SIZE);
-	memset(buffer_ptr, '\0', BUFFER_SIZE);
+	char* buffer_ptr = malloc(STREAM_BUFFER_SIZE);
+	memset(buffer_ptr, '\0', STREAM_BUFFER_SIZE);
 
 
 	// Clear metadata.
@@ -30,11 +30,11 @@ bool init(pcb* this, char* mdf_file_path)
 
 
 	// Consume initial, utterly useless, line.
-	read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, '\n');
+	read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, '\n');
 
 
 	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CODE_TERMINATOR))
+	while (read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR))
 	{
 		// Try to map attribute to metadata.
 		if (!add_metadata(this, buffer_ptr, stream_ptr))
@@ -56,6 +56,10 @@ bool init(pcb* this, char* mdf_file_path)
 	free(buffer_ptr);
 
 
+	// State.
+	this->state = CREATED;
+
+
 	// Success.
 	return true;
 }
@@ -75,6 +79,10 @@ bool terminate(pcb* this)
 
 	// Set state.
 	this->state = TERMINATED;
+
+
+	// Successful.
+	return true;
 }
 
 
@@ -83,6 +91,14 @@ pcb_state get_state(pcb* this)
 {
 	// Return.
 	return this->state;
+}
+
+
+// Get state.
+void set_state(pcb* this, pcb_state state)
+{
+	// Set.
+	this->state = state;
 }
 
 
@@ -103,11 +119,11 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
+			if (!add_metadata_descriptor(&this->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -121,7 +137,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles (always 0 for OS start and end).
@@ -143,11 +159,11 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
+			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -161,7 +177,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles.
@@ -183,11 +199,11 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
+			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -201,7 +217,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles.
@@ -223,7 +239,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
@@ -241,7 +257,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles.
@@ -263,7 +279,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
@@ -281,7 +297,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles.
@@ -303,11 +319,11 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get descriptor.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
 			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&config_ptr->metadata[i], buffer_ptr))
+			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
 				// Abort.
 				printf("\n\n\
@@ -321,7 +337,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Get cycles.
-			read_until(stream_ptr, buffer_ptr, BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
 
 
 			// Add cycles.

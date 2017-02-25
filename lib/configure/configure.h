@@ -12,6 +12,10 @@
 #include "../os/os.h"
 
 
+// Definitions.
+#define BUFFER_SIZE (size_t) 256
+
+
 // Function prototypes.
 bool configure_os(char*, os*);
 

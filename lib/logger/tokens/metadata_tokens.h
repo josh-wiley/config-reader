@@ -6,6 +6,8 @@
 // Definitions.
 #define METADATA_LOG_START "Metadata Metrics"
 #define METADATA_CYCLE_UNITS "ms"
+#define OS_START_OP_BEGIN_MESSAGE "Simulator program starting"
+#define OS_END_OP_BEGIN_MESSAGE "Simulator program ending"
 
 
 // End header guard.
