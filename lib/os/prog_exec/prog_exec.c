@@ -49,7 +49,7 @@ bool exec(os* os_ptr)
 
 
 	// Thread ID and status.
-	pthread_t* thread_id_ptr;
+	pthread_t thread_id = 0;
 	void* thread_status_ptr;
 
 
@@ -84,8 +84,8 @@ bool exec(os* os_ptr)
 
 
 			// Thread / sync.
-			pthread_create(thread_id_ptr, NULL, ms_sleep, (void*) &wait_time_ms);
-			pthread_join(*thread_id_ptr, &thread_status_ptr);
+			pthread_create(&thread_id, NULL, ms_sleep, (void*) &wait_time_ms);
+			pthread_join(thread_id, &thread_status_ptr);
 		}
 
 
