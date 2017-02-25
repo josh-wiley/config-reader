@@ -11,9 +11,9 @@
 //bool log_config_to_file(os_config*, unsigned int*);
 //bool log_config_to_display(os_config*, unsigned int*);
 bool log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
-bool log_metadata_end_op_to_file(FILE*, prog_metadata*, double);
+bool log_metadata_end_op_to_file(FILE*, os_config*, prog_metadata*, double);
 bool log_metadata_begin_op_to_display(prog_metadata*, double);
-bool log_metadata_end_op_to_display(prog_metadata*, double);
+bool log_metadata_end_op_to_display(os_config*, prog_metadata*, double);
 //bool compute_metadata_metrics(os_config*, unsigned int*);
 
 /*
@@ -153,8 +153,8 @@ bool log_metadata_end_op(os_config* config_ptr, prog_metadata* metadata_ptr, dou
 
 
 			// Log to both.
-			return log_metadata_end_op_to_display(metadata_ptr, elapsed_time) &&
-				log_metadata_end_op_to_file(stream_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_display(config_ptr, metadata_ptr, elapsed_time) &&
+				log_metadata_end_op_to_file(stream_ptr,config_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to file.
@@ -164,13 +164,13 @@ bool log_metadata_end_op(os_config* config_ptr, prog_metadata* metadata_ptr, dou
 
 
 			// Log to file.
-			return log_metadata_end_op_to_file(stream_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_file(stream_ptr, config_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to display.
 		case TO_DISPLAY:
 			// Log to display.
-			return log_metadata_end_op_to_display(metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_display(config_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Default.
@@ -341,7 +341,7 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 				// Default.
 				default:
 					// Abort.
-					printf("\n\nInvalid metadata descriptor found at run-time.\n\n");
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
 					return false;
 			}
 
@@ -366,7 +366,7 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 				// Default.
 				default:
 					// Abort.
-					printf("\n\nInvalid metadata descriptor found at run-time.\n\n");
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
 					return false;
 			}
 		
@@ -383,40 +383,800 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 
 
 			// Abort.
-			printf("\n\nInvalid metadata descriptor found at run-time.\n\n");
+			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
 			return false;
 		
 
+		// Memory.
+		case MEMORY:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Allocate.
+				case ALLOCATE:
+					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_ALLOCATE_OP_BEGIN_MESSAGE);
+					return true;
+
+
+				// Block.
+				case BLOCK:
+					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_BEGIN_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+			
+
 		// Default.
 		default:
-			// Abort.
-			printf("\n\nInvalid metadata code found at run-time.\n\n");
-			return false;
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// HDD.
+				case HDD:
+					// Switch on code.
+					switch (metadata_ptr->code)
+					{
+						// Input.
+						case INPUT:
+							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
+							return true;
+
+
+						// Output.
+						case OUTPUT:
+							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
+							return true;
+
+
+						// Default.
+						default:
+							// Abort.
+							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+							return false;
+					}
+				
+
+				// Keyboard.
+				case KEYBOARD:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Mouse.
+				case MOUSE:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Monitor.
+				case MONITOR:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Speaker.
+				case SPEAKER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Printer.
+				case PRINTER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
 	}
 }
 
 
 // Log metadata end operation to file.
-bool log_metadata_end_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+bool log_metadata_end_op_to_file(FILE* file_ptr, os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
-	// Success.
-	return true;
+	// Switch on op code.
+	switch (metadata_ptr->code)
+	{
+		// OS.
+		case OS:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start or end?.
+				case START:
+				case END:
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+
+
+		// Application.
+		case APPLICATION:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start.
+				case START:
+					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_END_MESSAGE);
+					return true;
+
+
+				// End.
+				case END:
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+		
+
+		// Process.
+		case PROCESS:
+			// Run?
+			if (metadata_ptr->descriptor == RUN)
+			{
+				// Log.
+				fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_END_MESSAGE);
+				return true;
+			}
+
+
+			// Abort.
+			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+			return false;
+		
+
+		// Memory.
+		case MEMORY:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Allocate.
+				case ALLOCATE:
+					fprintf(
+						file_ptr,
+						"\n\n%f - %s %x\n\n",
+						elapsed_time,
+						MEMORY_ALLOCATE_OP_END_MESSAGE,
+						alloc_mem(config_ptr->system_memory_bytes)
+					);
+					return true;
+
+
+				// Block.
+				case BLOCK:
+					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_END_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+			
+
+		// Default.
+		default:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// HDD.
+				case HDD:
+					// Switch on code.
+					switch (metadata_ptr->code)
+					{
+						// Input.
+						case INPUT:
+							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_END_MESSAGE);
+							return true;
+
+
+						// Output.
+						case OUTPUT:
+							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_END_MESSAGE);
+							return true;
+
+
+						// Default.
+						default:
+							// Abort.
+							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+							return false;
+					}
+				
+
+				// Keyboard.
+				case KEYBOARD:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Mouse.
+				case MOUSE:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Monitor.
+				case MONITOR:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Speaker.
+				case SPEAKER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Printer.
+				case PRINTER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+	}
 }
 
 
 // Log metadata begin operation to display.
 bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed_time)
 {
-	// Success.
-	return true;
+	// Switch on op code.
+	switch (metadata_ptr->code)
+	{
+		// OS.
+		case OS:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start.
+				case START:
+					printf("\n\n%f - %s\n\n", elapsed_time, OS_START_OP_BEGIN_MESSAGE);
+					return true;
+
+
+				// End.
+				case END:
+					printf("\n\n%f - %s\n\n", elapsed_time, OS_END_OP_BEGIN_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+
+
+		// Application.
+		case APPLICATION:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start.
+				case START:
+					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_BEGIN_MESSAGE);
+					return true;
+
+
+				// End.
+				case END:
+					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_END_OP_BEGIN_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+		
+
+		// Process.
+		case PROCESS:
+			// Run?
+			if (metadata_ptr->descriptor == RUN)
+			{
+				// Log.
+				printf("\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_BEGIN_MESSAGE);
+				return true;
+			}
+
+
+			// Abort.
+			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+			return false;
+		
+
+		// Memory.
+		case MEMORY:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Allocate.
+				case ALLOCATE:
+					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_ALLOCATE_OP_BEGIN_MESSAGE);
+					return true;
+
+
+				// Block.
+				case BLOCK:
+					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_BEGIN_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+			
+
+		// Default.
+		default:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// HDD.
+				case HDD:
+					// Switch on code.
+					switch (metadata_ptr->code)
+					{
+						// Input.
+						case INPUT:
+							printf("\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
+							return true;
+
+
+						// Output.
+						case OUTPUT:
+							printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
+							return true;
+
+
+						// Default.
+						default:
+							// Abort.
+							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+							return false;
+					}
+				
+
+				// Keyboard.
+				case KEYBOARD:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Mouse.
+				case MOUSE:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Monitor.
+				case MONITOR:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Speaker.
+				case SPEAKER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Printer.
+				case PRINTER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+	}
 }
 
 
 // Log metadata end operation to display.
-bool log_metadata_end_op_to_display(prog_metadata* metadata_ptr, double elapsed_time)
+bool log_metadata_end_op_to_display(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
-	// Success.
-	return true;
+	// Switch on op code.
+	switch (metadata_ptr->code)
+	{
+		// OS.
+		case OS:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start or end?.
+				case START:
+				case END:
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+
+
+		// Application.
+		case APPLICATION:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Start.
+				case START:
+					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_END_MESSAGE);
+					return true;
+
+
+				// End.
+				case END:
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+		
+
+		// Process.
+		case PROCESS:
+			// Run?
+			if (metadata_ptr->descriptor == RUN)
+			{
+				// Log.
+				printf("\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_END_MESSAGE);
+				return true;
+			}
+
+
+			// Abort.
+			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+			return false;
+		
+
+		// Memory.
+		case MEMORY:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// Allocate.
+				case ALLOCATE:
+					printf(
+						"\n\n%f - %s %x\n\n",
+						elapsed_time,
+						MEMORY_ALLOCATE_OP_END_MESSAGE,
+						alloc_mem(config_ptr->system_memory_bytes)
+					);
+					return true;
+
+
+				// Block.
+				case BLOCK:
+					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_END_MESSAGE);
+					return true;
+
+				
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+			
+
+		// Default.
+		default:
+			// Switch on descriptor.
+			switch (metadata_ptr->descriptor)
+			{
+				// HDD.
+				case HDD:
+					// Switch on code.
+					switch (metadata_ptr->code)
+					{
+						// Input.
+						case INPUT:
+							printf("\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_END_MESSAGE);
+							return true;
+
+
+						// Output.
+						case OUTPUT:
+							printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_END_MESSAGE);
+							return true;
+
+
+						// Default.
+						default:
+							// Abort.
+							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+							return false;
+					}
+				
+
+				// Keyboard.
+				case KEYBOARD:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Mouse.
+				case MOUSE:
+					// Input?
+					if (metadata_ptr->code == INPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Monitor.
+				case MONITOR:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+				
+				
+				// Speaker.
+				case SPEAKER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Printer.
+				case PRINTER:
+					// Output?
+					if (metadata_ptr->code == OUTPUT)
+					{
+						// Log.
+						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_END_MESSAGE);
+						return true;
+					}
+
+
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
+					return false;
+
+
+				// Default.
+				default:
+					// Abort.
+					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
+					return false;
+			}
+	}
 }
 
 

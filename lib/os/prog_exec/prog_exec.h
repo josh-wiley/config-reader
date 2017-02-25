@@ -18,7 +18,6 @@
 #include "../../file_io/file_io.h"
 #include "../../logger/logger.h"
 #include "../os.h"
-#include "../mem_alloc/mem_alloc.h"
 
 
 // Definitions.

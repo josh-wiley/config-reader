@@ -13,6 +13,7 @@
 #include "../file_io/file_io.h"
 #include "../os/config/os_config.h"
 #include "../os/prog_metadata/prog_metadata.h"
+#include "../os/mem_alloc/mem_alloc.h"
 
 
 // Function prototypes.
