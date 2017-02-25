@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim01: Sim01.o os.o file_io.o configure.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim01.o os.o file_io.o configure.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) && rm -rf *.o
+Sim01: Sim01.o os.o file_io.o logger.o configure.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim01.o os.o file_io.o logger.o configure.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -25,6 +25,11 @@ os.o:
 # File reader library.
 file_io.o:
 	$(CC) $(CFLAGS) lib/file_io/file_io.c
+
+
+# Logger.
+logger.o:
+	$(CC) $(CFLAGS) lib/logger/logger.c
 
 
 # OS configuration.
@@ -44,7 +49,7 @@ pcb.o:
 
 # Program simulator.
 prog_exec.o:
-	$(CC) $(CFLAGS) lib/os/prog_exec/prog_exec.c $(TFLAGS)
+	$(CC) $(CFLAGS) lib/os/prog_exec/prog_exec.c
 
 
 # Memory allocator.

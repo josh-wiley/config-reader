@@ -6,6 +6,7 @@
 // Definitions.
 #define FILE_PATH_BUFFER_SIZE 256
 #define PROG_RESULTS_BUFFER_SIZE 100000
+#define _BSD_SOURCE
 
 
 // Headers.

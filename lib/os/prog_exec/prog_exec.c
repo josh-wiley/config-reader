@@ -17,7 +17,7 @@ bool exec(os* os_ptr)
 {
 	// PCB pointer, log path, and metadata pointer.
 	pcb* pcb_ptr = &os_ptr->pcb;
-	char* log_path = os_ptr->config.log_file_path;
+	os_config* config_ptr = &os_ptr->config;
 	prog_metadata* metadata_ptr = pcb_ptr->metadata;
 
 
@@ -31,7 +31,7 @@ bool exec(os* os_ptr)
 
 		// Get relative metadata file path.
 		strcat(buffer_ptr, METADATA_FOLDER_PATH);
-		strcat(buffer_ptr, os_ptr->config.metadata_file_path);
+		strcat(buffer_ptr, config_ptr->metadata_file_path);
 
 
 		// Create.
@@ -44,12 +44,13 @@ bool exec(os* os_ptr)
 
 
 	// Time to wait (microseconds) and start clock.
-	unsigned int wait_time_ms = 0;
+	unsigned int* wait_time_ms_ptr;
 	clock_t start_clock = clock();
 
 
 	// Thread ID and status.
-	int thread_id, thread_status;
+	pthread_t* thread_id_ptr;
+	void* thread_status_ptr;
 
 
 	// Calculate all metadata.
@@ -61,14 +62,14 @@ bool exec(os* os_ptr)
 
 		// Log begin operation.
 		log_metadata_begin_op(
-			log_path,
+			config_ptr,
 			&metadata_ptr[i],
 			(double) (clock() - start_clock) * 1000 / CLOCKS_PER_SEC // Elapsed time.
 		);
 
 
 		// Calculate total time.
-		wait_time_ms = get_op_time(&os_ptr->config, &metadata_ptr[i]);
+		*wait_time_ms_ptr = get_op_time(&os_ptr->config, &metadata_ptr[i]);
 
 
 		// Set PCB state.
@@ -83,21 +84,21 @@ bool exec(os* os_ptr)
 
 
 			// Thread / sync.
-			pthread_create(&thread_id, NULL, ms_sleep, wait_time_ms);
-			pthread_join(thread_id, &thread_status);
+			pthread_create(thread_id_ptr, NULL, ms_sleep, (void*) wait_time_ms_ptr);
+			pthread_join(*thread_id_ptr, &thread_status_ptr);
 		}
 
 
 		// CPU?
-		else if (wait_time_ms > 0) {
+		else if (*wait_time_ms_ptr > 0) {
 			// Sleep.
-			ms_sleep(wait_time_ms);
+			ms_sleep(*wait_time_ms_ptr);
 		}
 
 
 		// Log end operation.
 		log_metadata_end_op(
-			log_path,
+			config_ptr,
 			&metadata_ptr[i],
 			(double) (clock() - start_clock) * 1000 / CLOCKS_PER_SEC // Elapsed time.
 		);

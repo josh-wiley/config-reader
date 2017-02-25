@@ -4,6 +4,7 @@
 
 
 // Headers.
+#include <string.h>
 #include "../../bool/bool.h"
 #include "../../file_io/file_io.h"
 #include "../config/os_config.h"
