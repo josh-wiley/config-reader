@@ -32,7 +32,7 @@ bool exec(os* os_ptr)
 
 
 	// Create.
-	init(pcb_ptr, buffer_ptr);
+	create_pcb(pcb_ptr, buffer_ptr);
 
 
 	// Free buffer.
@@ -106,7 +106,7 @@ bool exec(os* os_ptr)
 
 
 	// Terminate PCB.
-	terminate(pcb_ptr);
+	terminate_pcb(pcb_ptr);
 
 
 	// Success.

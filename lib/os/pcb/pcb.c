@@ -12,8 +12,8 @@ bool add_metadata(pcb*, char*, FILE*);
 bool add_metadata_descriptor(prog_metadata*, char*);
 
 
-// Initialize.
-bool init(pcb* this, char* mdf_file_path)
+// Create.
+bool create_pcb(pcb* this, char* mdf_file_path)
 {
 	// Get file stream.
 	FILE* stream_ptr = open_file(mdf_file_path, "r");
@@ -65,7 +65,7 @@ bool init(pcb* this, char* mdf_file_path)
 
 
 // Terminate.
-bool terminate(pcb* this)
+bool terminate_pcb(pcb* this)
 {
 	// Was metadata consumed?
 	if (this->num_metadata > 0)

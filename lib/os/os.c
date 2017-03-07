@@ -18,6 +18,10 @@ bool configure(os* this, char* file_path)
 	FILE* stream_ptr = open_file(file_path, "r");
 
 
+	// Initialize config.
+	init_config(&this->config);
+
+
 	// Buffer.
 	char* buffer_ptr = malloc(FILE_IO_BUFFER_SIZE);
 	memset(buffer_ptr, '\0', FILE_IO_BUFFER_SIZE);

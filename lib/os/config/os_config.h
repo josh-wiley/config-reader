@@ -5,6 +5,7 @@
 
 // Headers.
 #include <stdlib.h>
+#include "../../bool/bool.h"
 
 
 // Definitions.
@@ -38,6 +39,10 @@ typedef struct
 	unsigned int mouse_quantity;
 	unsigned int system_memory_bytes;
 } os_config;
+
+
+// Function prototypes.
+bool init_config(os_config*);
 
 
 // End header guard.

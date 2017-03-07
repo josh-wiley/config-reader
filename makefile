@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim03: Sim03.o os.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim03.o os.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -20,6 +20,11 @@ Sim03.o:
 # OS.
 os.o:
 	$(CC) $(CFLAGS) lib/os/os.c
+
+
+# OS config.
+os_config.o:
+	$(CC) $(CFLAGS) lib/os/config/os_config.c
 
 
 # File reader library.

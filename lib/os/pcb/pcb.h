@@ -31,8 +31,8 @@ typedef struct
 
 
 // Function prototypes.
-bool init(pcb*, char*);
-bool terminate(pcb*);
+bool create_pcb(pcb*, char*);
+bool terminate_pcb(pcb*);
 pcb_state get_state(pcb*);
 void set_state(pcb*, pcb_state);
 
