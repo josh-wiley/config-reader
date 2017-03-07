@@ -21,26 +21,22 @@ bool exec(os* os_ptr)
 	prog_metadata* metadata_ptr = pcb_ptr->metadata;
 
 
-	// PCB not yet created?
-	if (pcb_ptr->num_metadata == 0)
-	{
-		// Buffer.
-		char* buffer_ptr = malloc(FILE_PATH_BUFFER_SIZE);
-		memset(buffer_ptr, '\0', FILE_PATH_BUFFER_SIZE);
+	// Buffer.
+	char* buffer_ptr = malloc(FILE_PATH_BUFFER_SIZE);
+	memset(buffer_ptr, '\0', FILE_PATH_BUFFER_SIZE);
 
 
-		// Get relative metadata file path.
-		strcat(buffer_ptr, METADATA_FOLDER_PATH);
-		strcat(buffer_ptr, config_ptr->metadata_file_path);
+	// Get relative metadata file path.
+	strcat(buffer_ptr, METADATA_FOLDER_PATH);
+	strcat(buffer_ptr, config_ptr->metadata_file_path);
 
 
-		// Create.
-		init(pcb_ptr, buffer_ptr);
+	// Create.
+	init(pcb_ptr, buffer_ptr);
 
 
-		// Free.
-		free(buffer_ptr);
-	}
+	// Free buffer.
+	free(buffer_ptr);
 
 
 	// Time to wait (microseconds) and start clock.
@@ -53,11 +49,16 @@ bool exec(os* os_ptr)
 	void* thread_status_ptr;
 
 
-	// Calculate all metadata.
+	// TODO: REMOVE
+	printf("\n\nBeginning program simulation...\n\n");
+
+
+	// Simulate on metadata.
 	for (unsigned int i = 0; i < pcb_ptr->num_metadata; i++)
 	{
 		// Set PCB state.
 		set_state(pcb_ptr, READY);
+
 
 		// Log begin operation.
 		log_metadata_begin_op(
@@ -93,6 +94,7 @@ bool exec(os* os_ptr)
 			// Sleep.
 			ms_sleep((void*) &wait_time_ms);
 		}
+
 
 		// Log end operation.
 		log_metadata_end_op(

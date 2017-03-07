@@ -71,7 +71,6 @@ bool terminate(pcb* this)
 	if (this->num_metadata > 0)
 	{
 		// Clear.
-		free(this->metadata);
 		this->num_metadata = 0;
 	}
 
