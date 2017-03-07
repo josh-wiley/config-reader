@@ -138,6 +138,38 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 	}
 
 
+	// Memory block size attribute?
+	else if (strstr(buffer_ptr, MEMORY_BLOCK_SIZE_ATTRIBUTE))
+	{
+		// Conversion multiplier.
+		unsigned int multiplier;
+
+
+		// Units?
+		if (!get_memory_unit_multiplier(buffer_ptr, &multiplier))
+		{
+			// Alert.
+			printf("\n\nSYSTEM MEMORY ERROR: Invalid units\n\n");
+
+
+			// Abort.
+			return false;
+		}
+
+
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		config_ptr->system_memory_bytes = multiplier * atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
 	// Hard drive cycle time attribute?
 	else if (strcmp(buffer_ptr, HDD_PERIOD_ATTRIBUTE) == 0)
 	{
@@ -147,6 +179,22 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		// Save.
 		config_ptr->hdd_period_ms = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Hard drive quantity attribute?
+	else if (strcmp(buffer_ptr, HDD_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		config_ptr->hdd_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -170,6 +218,22 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 	}
 
 
+	// Keyboard quantity attribute?
+	else if (strcmp(buffer_ptr, KEYBOARD_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+		
+		// Save.
+		config_ptr->keyboard_quantity = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
 	// Mouse cycle time attribute?
 	else if (strcmp(buffer_ptr, MOUSE_PERIOD_ATTRIBUTE) == 0)
 	{
@@ -186,6 +250,21 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 	}
 
 
+	// Mouse quantity attribute?
+	else if (strcmp(buffer_ptr, MOUSE_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+		
+		// Save.
+		config_ptr->mouse_quantity = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
 
 	// Monitor display period attribute?
 	else if (strcmp(buffer_ptr, MONITOR_DISPLAY_TIME_ATTRIBUTE) == 0)
@@ -196,6 +275,22 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		// Save.
 		config_ptr->monitor_period_ms = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Monitor quantity attribute?
+	else if (strcmp(buffer_ptr, MONITOR_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+		
+		// Save.
+		config_ptr->monitor_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -219,6 +314,22 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 	}
 
 
+	// Speaker quantity attribute?
+	else if (strcmp(buffer_ptr, SPEAKER_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+		
+		// Save.
+		config_ptr->speaker_quantity = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
 	// Printer period attribute?
 	else if (strcmp(buffer_ptr, PRINTER_PERIOD_ATTRIBUTE) == 0)
 	{
@@ -228,6 +339,22 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		// Save.
 		config_ptr->printer_period_ms = atoi(buffer_ptr);
+
+
+		// Success.
+		return true;
+	}
+
+
+	// Printer quantity attribute?
+	else if (strcmp(buffer_ptr, PRINTER_QUANTITY_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		config_ptr->printer_quantity = atoi(buffer_ptr);
 
 
 		// Success.

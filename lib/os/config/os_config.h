@@ -25,11 +25,17 @@ typedef struct
 	unsigned int processor_period_ms;
 	unsigned int memory_period_ms;
 	unsigned int hdd_period_ms;
+	unsigned int hdd_quantity;
 	unsigned int monitor_period_ms;
+	unsigned int monitor_quantity;
 	unsigned int speaker_period_ms;
+	unsigned int speaker_quantity;
 	unsigned int printer_period_ms;
+	unsigned int printer_total;
 	unsigned int keyboard_period_ms;
+	unsigned int keyboard_quantity;
 	unsigned int mouse_period_ms;
+	unsigned int mouse_quantity;
 	unsigned int system_memory_bytes;
 } os_config;
 
