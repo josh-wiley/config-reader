@@ -31,7 +31,7 @@ typedef struct
 	unsigned int speaker_period_ms;
 	unsigned int speaker_quantity;
 	unsigned int printer_period_ms;
-	unsigned int printer_total;
+	unsigned int printer_quantity;
 	unsigned int keyboard_period_ms;
 	unsigned int keyboard_quantity;
 	unsigned int mouse_period_ms;
