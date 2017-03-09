@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef LIB_OS_MEM_ALLOC_H_
-#define LIB_OS_MEM_ALLOC_H_
+#ifndef LIB_OS_MEM_MAN_H_
+#define LIB_OS_MEM_MAN_H_
 
 
 // Headers.
@@ -13,15 +13,16 @@
 
 // Memory management unit.
 typedef struct {
-	unsigned int total_mem;
+	unsigned int total_mem_bytes;
 	unsigned int block_size;
 	unsigned int blocks_allocated;
 } mem_man;
 
 
 // Function prototypes.
-void init(mem_man*, os_config*);
+void init(mem_man*);
 unsigned int alloc_mem(mem_man*);
 
 
+// End header guard
 #endif

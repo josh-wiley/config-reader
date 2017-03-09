@@ -11,9 +11,9 @@
 bool log_os_to_file(os*, unsigned int*);
 bool log_os_to_display(os*, unsigned int*);
 bool log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
-bool log_metadata_end_op_to_file(FILE*, os_config*, prog_metadata*, double);
+bool log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
 bool log_metadata_begin_op_to_display(prog_metadata*, double);
-bool log_metadata_end_op_to_display(os_config*, prog_metadata*, double);
+bool log_metadata_end_op_to_display(os*, prog_metadata*, double);
 bool compute_metadata_metrics(os*, unsigned int*);
 
 
@@ -138,40 +138,40 @@ bool log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, d
 
 
 // Log metadata end operation.
-bool log_metadata_end_op(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+bool log_metadata_end_op(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Declare stream pointer.
 	FILE* stream_ptr;
 
 
 	// Switch on log destination.
-	switch (config_ptr->log_dest)
+	switch (os_ptr->config.log_dest)
 	{
 		// Both?
 		case TO_BOTH:
 			// Get stream.
-			stream_ptr = open_file(config_ptr->log_file_path, "w");
+			stream_ptr = open_file(os_ptr->config.log_file_path, "w");
 
 
 			// Log to both.
-			return log_metadata_end_op_to_display(config_ptr, metadata_ptr, elapsed_time) &&
-				log_metadata_end_op_to_file(stream_ptr,config_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_display(os_ptr, metadata_ptr, elapsed_time) &&
+				log_metadata_end_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to file.
 		case TO_FILE:
 			// Get stream.
-			stream_ptr = open_file(config_ptr->log_file_path, "w");
+			stream_ptr = open_file(os_ptr->config.log_file_path, "w");
 
 
 			// Log to file.
-			return log_metadata_end_op_to_file(stream_ptr, config_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to display.
 		case TO_DISPLAY:
 			// Log to display.
-			return log_metadata_end_op_to_display(config_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_end_op_to_display(os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Default.
@@ -541,7 +541,7 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 
 
 // Log metadata end operation to file.
-bool log_metadata_end_op_to_file(FILE* file_ptr, os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -617,7 +617,7 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os_config* config_ptr, prog_met
 						"\n\n%f - %s %x\n\n",
 						elapsed_time,
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
-						alloc_mem(config_ptr->system_memory_bytes)
+						alloc_mem(&os_ptr->memory_manager)
 					);
 					return true;
 
@@ -974,7 +974,7 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 
 
 // Log metadata end operation to display.
-bool log_metadata_end_op_to_display(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -1049,7 +1049,7 @@ bool log_metadata_end_op_to_display(os_config* config_ptr, prog_metadata* metada
 						"\n\n%f - %s %x\n\n",
 						elapsed_time,
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
-						alloc_mem(config_ptr->system_memory_bytes)
+						alloc_mem(&os_ptr->memory_manager)
 					);
 					return true;
 

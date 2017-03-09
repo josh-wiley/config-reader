@@ -7,7 +7,7 @@
 #include "os.h"
 
 // Function prototypes.
-bool map_to_config(char*, FILE*, os_config*);
+bool map_config(os*, char*, FILE*);
 bool get_memory_unit_multiplier(char*, unsigned int*);
 
 
@@ -35,7 +35,7 @@ bool configure(os* this, char* file_path)
 	while (read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
 	{
 		// Try to map attribute to OS config.
-		if (!map_to_config(buffer_ptr, stream_ptr, &this->config))
+		if (!map_config(this, buffer_ptr, stream_ptr))
 		{
 			// Abort.
 			close_file(stream_ptr);
@@ -60,7 +60,7 @@ bool configure(os* this, char* file_path)
 
 
 // Config attribute mapper.
-bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
+bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 {
 	// Version/Phase attribute?
 	if (strcmp(buffer_ptr, VERSION_PHASE_ATTRIBUTE) == 0)
@@ -70,7 +70,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->version = atof(buffer_ptr);
+		this->config.version = atof(buffer_ptr);
 
 
 		// Success.
@@ -86,7 +86,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->processor_period_ms = atoi(buffer_ptr);
+		this->config.processor_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -102,7 +102,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->memory_period_ms = atoi(buffer_ptr);
+		this->config.memory_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -134,7 +134,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->system_memory_bytes = multiplier * atoi(buffer_ptr);
+		this->memory_manager.total_mem_bytes = multiplier * atoi(buffer_ptr);
 
 
 		// Success.
@@ -166,7 +166,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->memory_block_size = multiplier * atoi(buffer_ptr);
+		this->memory_manager.block_size = multiplier * atoi(buffer_ptr);
 
 
 		// Success.
@@ -182,7 +182,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->hdd_period_ms = atoi(buffer_ptr);
+		this->config.hdd_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -198,7 +198,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->hdd_quantity = atoi(buffer_ptr);
+		this->config.hdd_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -214,7 +214,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		
 		// Save.
-		config_ptr->keyboard_period_ms = atoi(buffer_ptr);
+		this->config.keyboard_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -230,7 +230,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		
 		// Save.
-		config_ptr->keyboard_quantity = atoi(buffer_ptr);
+		this->config.keyboard_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -246,7 +246,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->mouse_period_ms = atoi(buffer_ptr);
+		this->config.mouse_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -262,7 +262,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		
 		// Save.
-		config_ptr->mouse_quantity = atoi(buffer_ptr);
+		this->config.mouse_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -278,7 +278,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->monitor_period_ms = atoi(buffer_ptr);
+		this->config.monitor_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -294,7 +294,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		
 		// Save.
-		config_ptr->monitor_quantity = atoi(buffer_ptr);
+		this->config.monitor_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -310,7 +310,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->speaker_period_ms = atoi(buffer_ptr);
+		this->config.speaker_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -326,7 +326,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 		
 		// Save.
-		config_ptr->speaker_quantity = atoi(buffer_ptr);
+		this->config.speaker_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -342,7 +342,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->printer_period_ms = atoi(buffer_ptr);
+		this->config.printer_period_ms = atoi(buffer_ptr);
 
 
 		// Success.
@@ -358,7 +358,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->printer_quantity = atoi(buffer_ptr);
+		this->config.printer_quantity = atoi(buffer_ptr);
 
 
 		// Success.
@@ -377,7 +377,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 		if (strcmp(buffer_ptr, LOG_TO_BOTH_VALUE) == 0)
 		{
 			// Save.
-			config_ptr->log_dest = TO_BOTH;
+			this->config.log_dest = TO_BOTH;
 		}
 
 
@@ -385,7 +385,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 		else if (strcmp(buffer_ptr, LOG_TO_FILE_VALUE) == 0)
 		{
 			// Save.
-			config_ptr->log_dest = TO_FILE;
+			this->config.log_dest = TO_FILE;
 		}
 
 
@@ -393,7 +393,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 		else if (strcmp(buffer_ptr, LOG_TO_DISPLAY_VALUE) == 0)
 		{
 			// Save.
-			config_ptr->log_dest = TO_DISPLAY;
+			this->config.log_dest = TO_DISPLAY;
 		}
 
 
@@ -410,7 +410,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		strcpy(config_ptr->log_file_path, buffer_ptr);
+		strcpy(this->config.log_file_path, buffer_ptr);
 
 
 		// Success.
@@ -426,7 +426,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		strcpy(config_ptr->metadata_file_path, buffer_ptr);
+		strcpy(this->config.metadata_file_path, buffer_ptr);
 
 
 		// Success.

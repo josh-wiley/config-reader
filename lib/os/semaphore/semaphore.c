@@ -11,7 +11,7 @@
 void init(semaphore* this)
 {
 	// Initialize number of PCBs in queue.
-	this->processes_waiting = -1;
+	this->waiting_processes = -1;
 }
 
 

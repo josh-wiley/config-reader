@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o semaphore.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o semaphore.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o semaphore.o mem_man.o
+	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o semaphore.o mem_man.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -58,8 +58,8 @@ prog_exec.o:
 
 
 # Memory allocator.
-mem_alloc.o:
-	$(CC) $(CFLAGS) lib/os/mem_alloc/mem_alloc.c
+mem_man.o:
+	$(CC) $(CFLAGS) lib/os/mem_man/mem_man.c
 
 
 # Clean.

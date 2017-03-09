@@ -9,6 +9,7 @@
 #include "../bool/bool.h"
 #include "../file_io/file_io.h"
 #include "config/os_config.h"
+#include "mem_man/mem_man.h"
 #include "pcb/pcb.h"
 #include "config_tokens.h"
 
@@ -20,6 +21,7 @@
 // OS.
 typedef struct {
 	os_config config;
+	mem_man memory_manager;
 	pcb pcb;
 } os;
 
