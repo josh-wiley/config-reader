@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_alloc.o
-	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o semaphore.o mem_alloc.o
+	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o semaphore.o mem_alloc.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -45,6 +45,11 @@ prog_metadata.o:
 # Process control block.
 pcb.o:
 	$(CC) $(CFLAGS) lib/os/pcb/pcb.c
+
+
+# Semaphore.
+semaphore.o:
+	$(CC) $(CFLAGS) lib/os/semaphore/semaphore.c
 
 
 # Program simulator.

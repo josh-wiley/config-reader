@@ -8,10 +8,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include "../config/os_config.h"
+
+
+// Memory management unit.
+typedef struct {
+	unsigned int total_mem;
+	unsigned int block_size;
+	unsigned int blocks_allocated;
+} mem_man;
 
 
 // Function prototypes.
-unsigned int alloc_mem(int);
+void init(mem_man*, os_config*);
+unsigned int alloc_mem(mem_man*);
 
 
 #endif

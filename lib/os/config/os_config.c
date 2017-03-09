@@ -27,6 +27,7 @@ bool init_config(os_config* this)
 	this->mouse_period_ms = 0;
 	this->mouse_quantity = 1;
 	this->system_memory_bytes = 1024;
+	this->memory_block_size = 256;
 
 
 	// Success.

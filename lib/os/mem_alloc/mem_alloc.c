@@ -7,39 +7,24 @@
 #include "mem_alloc.h"
 
 
-/**
- * @brief Memory Adress Return Function
- *
- * @details Reads in an integer representing kilobytes of total memory. Using
- *			the total memory, the function returns the address as a hexadecimal
- *			string.
- *          
- * @param in: total memory in kb (int)
- *
- * @pre None
- *
- * @post Hexadecimal string address returned
- *
- * @exception Requires value > 0
- *
- * @exception Address pointer should be null
- */
-unsigned int alloc_mem(int total_memory)
+// Init.
+void init(mem_man* this, os_config* config_ptr)
 {
-	// No mem?
-	if (total_memory < 1)
-	{
-		// Nope.
-		return 0;
-	}
-	
+	// Initialize.
+	this->blocks_allocated = 0;
 
-	// Seed the RNG.
-	srand(time(NULL));
-	
 
-	// Return address.
-	return rand() % total_memory;
+	// Impart state.
+	this->total_mem = config_ptr->system_memory_bytes;
+	this->block_size = config_ptr->memory_block_size;
+}
+
+
+// Allocate memory.
+unsigned int alloc_mem(mem_man* this)
+{
+	// Generate next address.
+	return (this->blocks_allocated * this->block_size) % this->total_mem;
 }
 
 #endif

@@ -166,7 +166,7 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 
 
 		// Save.
-		config_ptr->system_memory_bytes = multiplier * atoi(buffer_ptr);
+		config_ptr->memory_block_size = multiplier * atoi(buffer_ptr);
 
 
 		// Success.
@@ -432,7 +432,6 @@ bool map_to_config(char* buffer_ptr, FILE* stream_ptr, os_config* config_ptr)
 		// Success.
 		return true;
 	}
-
 
 
 	// File end?

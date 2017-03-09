@@ -38,6 +38,7 @@ typedef struct
 	unsigned int mouse_period_ms;
 	unsigned int mouse_quantity;
 	unsigned int system_memory_bytes;
+	unsigned int memory_block_size;
 } os_config;
 
 
