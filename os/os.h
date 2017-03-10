@@ -9,6 +9,7 @@
 #include "../utils/file_io/file_io.h"
 #include "config/os_config.h"
 #include "mem_man/mem_man.h"
+#include "io_man/io_man.h"
 #include "pcb/pcb.h"
 #include "config_tokens.h"
 
@@ -21,6 +22,7 @@
 typedef struct {
 	os_config config;
 	mem_man memory_manager;
+	io_man io_manager;
 	pcb pcb;
 } os;
 

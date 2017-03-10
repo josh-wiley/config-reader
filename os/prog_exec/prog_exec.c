@@ -49,13 +49,8 @@ int exec(os* os_ptr)
 	void* thread_status_ptr;
 
 
-	// Declare semaphore.
-	sem_t semaphore;
-
-
-	// Initialize mutex and semaphore.
+	// Initialize mutex.
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-	sem_init(&semaphore, 0, 0);
 
 
 	// Simulate on metadata.
@@ -84,7 +79,10 @@ int exec(os* os_ptr)
 		// I/O?
 		if (metadata_ptr->code == INPUT || metadata_ptr->code == OUTPUT)
 		{
-			// Acquire device.
+			// Acquire device from appropriate pool.
+
+
+			// Lock.
 
 			
 			// Set PCB state.
@@ -117,9 +115,8 @@ int exec(os* os_ptr)
 	terminate_pcb(pcb_ptr);
 
 
-	// Destroy mutex and semaphore.
+	// Destroy mutex.
 	pthread_mutex_destroy(&mutex);
-	sem_destroy(&semaphore);
 
 
 	// Success.

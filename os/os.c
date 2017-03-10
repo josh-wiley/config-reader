@@ -197,8 +197,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
-		// Save.
-		this->config.hdd_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, HDD, atoi(buffer_ptr));
 
 
 		// Success.
@@ -229,8 +229,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 		
-		// Save.
-		this->config.keyboard_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, KEYBOARD, atoi(buffer_ptr));
 
 
 		// Success.
@@ -261,8 +261,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 		
-		// Save.
-		this->config.mouse_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, MOUSE, atoi(buffer_ptr));
 
 
 		// Success.
@@ -293,8 +293,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 		
-		// Save.
-		this->config.monitor_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, MONITOR, atoi(buffer_ptr));
 
 
 		// Success.
@@ -325,8 +325,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 		
-		// Save.
-		this->config.speaker_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, SPEAKER, atoi(buffer_ptr));
 
 
 		// Success.
@@ -357,8 +357,8 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
 
 
-		// Save.
-		this->config.printer_quantity = atoi(buffer_ptr);
+		// Set.
+		set_available(&this->io_manager, PRINTER, atoi(buffer_ptr));
 
 
 		// Success.

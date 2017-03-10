@@ -13,7 +13,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <semaphore.h>
 #include <pthread.h>
 #include "../../utils/file_io/file_io.h"
 #include "../../utils/logger/logger.h"
