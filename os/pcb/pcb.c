@@ -8,12 +8,12 @@
 
 
 // Function prototypes.
-bool add_metadata(pcb*, char*, FILE*);
-bool add_metadata_descriptor(prog_metadata*, char*);
+int add_metadata(pcb*, char*, FILE*);
+int add_metadata_descriptor(prog_metadata*, char*);
 
 
 // Create.
-bool create_pcb(pcb* this, char* mdf_file_path)
+int create_pcb(pcb* this, char* mdf_file_path)
 {
 	// Get file stream.
 	FILE* stream_ptr = open_file(mdf_file_path, "r");
@@ -33,15 +33,15 @@ bool create_pcb(pcb* this, char* mdf_file_path)
 
 
 	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR))
+	while (read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR) == 0)
 	{
-		// Try to map attribute to metadata.
-		if (!add_metadata(this, buffer_ptr, stream_ptr))
+		// Map attribute to metadata.
+		if (add_metadata(this, buffer_ptr, stream_ptr))
 		{
 			// Abort.
 			close_file(stream_ptr);
 			free(buffer_ptr);
-			return false;
+			return 1;
 		};
 	}
 
@@ -60,12 +60,12 @@ bool create_pcb(pcb* this, char* mdf_file_path)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 
 // Terminate.
-bool terminate_pcb(pcb* this)
+int terminate_pcb(pcb* this)
 {
 	// Was metadata consumed?
 	if (this->num_metadata > 0)
@@ -80,7 +80,7 @@ bool terminate_pcb(pcb* this)
 
 
 	// Successful.
-	return true;
+	return 0;
 }
 
 
@@ -101,7 +101,7 @@ void set_state(pcb* this, pcb_state state)
 
 
 // Add metadata.
-bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
+int add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 {
 	// Save current metadata position.
 	unsigned int i = this->num_metadata;
@@ -120,17 +120,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, OS_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -147,7 +150,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 		
 
 		// Application?
@@ -160,17 +163,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, APPLICATION_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -187,7 +193,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 		
 
 		// Process?
@@ -200,17 +206,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, PROCESS_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -227,7 +236,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 
 
 		// Input?
@@ -240,17 +249,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, INPUT_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -267,7 +279,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 
 
 		// Output?
@@ -280,17 +292,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, OUTPUT_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -307,7 +322,7 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 		
 
 		// Memory?
@@ -320,17 +335,20 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 			read_until(stream_ptr, buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
 
 
-			// Try to add the descriptor.
-			if (!add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
+			// Add the descriptor.
+			if (add_metadata_descriptor(&this ->metadata[i], buffer_ptr))
 			{
-				// Abort.
+				// Alert.
 				printf("\n\n\
 					ERROR READING DESCRIPTOR %i:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
 					i + 1, buffer_ptr, MEMORY_CODE
 				);
-				return false;
+
+
+				// Abort.
+				return 1;
 			}
 
 
@@ -347,25 +365,28 @@ bool add_metadata(pcb* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 			// Done.
-			return true;
+			return 0;
 
 
 		// No match?
 		default:
-			// Abort.
+			// Alert.
 			printf("\n\n\
 				ERROR READING CODE %i:\n\
 				Invalid code \"%c\".\
 				\n\n",
 				i + 1, buffer_ptr[0]
 			);
-			return false;
+
+
+			// Abort.
+			return 1;
 	}
 }
 
 
 // Is valid descriptor for code?
-bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
+int add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 {
 	// Valid descriptor based on code?
 	switch (metadata->code)
@@ -378,7 +399,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = START;
-				return true;
+				return 0;
 			}
 
 
@@ -387,12 +408,12 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = END;
-				return true;
+				return 0;
 			}
 
 
 			// Descriptor DNE.
-			return false;
+			return 1;
 
 
 		// Process?
@@ -402,12 +423,12 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = RUN;
-				return true;
+				return 0;
 			}
 
 
 			// Descriptor DNE.
-			return false;
+			return 1;
 
 
 		// Input?
@@ -417,7 +438,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = HDD;
-				return true;
+				return 0;
 			}
 
 
@@ -426,7 +447,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = KEYBOARD;
-				return true;
+				return 0;
 			}
 
 
@@ -435,7 +456,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = MOUSE;
-				return true;
+				return 0;
 			}
 			
 			
@@ -444,12 +465,12 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = PRINTER;
-				return true;
+				return 0;
 			}
 
 
 			// Descriptor DNE.
-			return false;
+			return 1;
 
 
 		// Output? 
@@ -459,7 +480,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = HDD;
-				return true;
+				return 0;
 			}
 
 
@@ -468,7 +489,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = MONITOR;
-				return true;
+				return 0;
 			}
 			
 			
@@ -477,7 +498,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = SPEAKER;
-				return true;
+				return 0;
 			}
 
 
@@ -486,12 +507,12 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = PRINTER;
-				return true;
+				return 0;
 			}
 
 
 			// Descriptor DNE.
-			return false;
+			return 1;
 
 
 		// Memory?
@@ -501,7 +522,7 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = BLOCK;
-				return true;
+				return 0;
 			}
 
 
@@ -510,17 +531,17 @@ bool add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
 			{
 				// Add.
 				metadata->descriptor = ALLOCATE;
-				return true;
+				return 0;
 			}
 
 
 			// Descriptor DNE.
-			return false;
+			return 1;
 		
 
 		// Default.
 		default:
-			return false;
+			return 1;
 	}
 }
 

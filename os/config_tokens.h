@@ -3,7 +3,7 @@
 #define LIB_OS_CONFIG_TOKENS_H_
 
 
-// Definitions
+// Definitions.
 #define DEFAULT_CONFIG "./conf/default.conf"
 #define CONFIG_ATTRIBUTE_DELIMITER ':'
 #define CONFIG_VALUE_DELIMITER '\n'

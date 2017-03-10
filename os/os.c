@@ -7,12 +7,12 @@
 #include "os.h"
 
 // Function prototypes.
-bool map_config(os*, char*, FILE*);
-bool get_memory_unit_multiplier(char*, unsigned int*);
+int map_config(os*, char*, FILE*);
+int get_memory_unit_multiplier(char*, unsigned int*);
 
 
 // Configure OS.
-bool configure(os* this, char* file_path)
+int configure(os* this, char* file_path)
 {
 	// Get stream.
 	FILE* stream_ptr = open_file(file_path, "r");
@@ -32,15 +32,15 @@ bool configure(os* this, char* file_path)
 
 
 	// Read from stream.
-	while (read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER))
+	while (read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_ATTRIBUTE_DELIMITER) == 0)
 	{
-		// Try to map attribute to OS config.
-		if (!map_config(this, buffer_ptr, stream_ptr))
+		// Map attribute to OS config.
+		if (map_config(this, buffer_ptr, stream_ptr))
 		{
 			// Abort.
 			close_file(stream_ptr);
 			free(buffer_ptr);
-			return false;
+			return 1;
 		}
 	}
 
@@ -55,12 +55,12 @@ bool configure(os* this, char* file_path)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 
 // Config attribute mapper.
-bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
+int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 {
 	// Version/Phase attribute?
 	if (strcmp(buffer_ptr, VERSION_PHASE_ATTRIBUTE) == 0)
@@ -74,7 +74,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -90,7 +90,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -106,7 +106,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -118,14 +118,14 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Units?
-		if (!get_memory_unit_multiplier(buffer_ptr, &multiplier))
+		if (get_memory_unit_multiplier(buffer_ptr, &multiplier))
 		{
 			// Alert.
-			printf("\n\nSYSTEM MEMORY ERROR: Invalid units\n\n");
+			printf("\n\nInvalid system memory units...\n\n");
 
 
 			// Abort.
-			return false;
+			return 1;
 		}
 
 
@@ -138,7 +138,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -150,14 +150,14 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Units?
-		if (!get_memory_unit_multiplier(buffer_ptr, &multiplier))
+		if (get_memory_unit_multiplier(buffer_ptr, &multiplier))
 		{
 			// Alert.
-			printf("\n\nSYSTEM MEMORY ERROR: Invalid units\n\n");
+			printf("\n\nInvalid system memory units...\n\n");
 
 
 			// Abort.
-			return false;
+			return 1;
 		}
 
 
@@ -170,7 +170,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -186,7 +186,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -202,7 +202,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -218,7 +218,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -234,7 +234,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -250,7 +250,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -266,7 +266,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -282,7 +282,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -298,7 +298,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -314,7 +314,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -330,7 +330,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -346,7 +346,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -362,7 +362,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -398,7 +398,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -414,7 +414,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -430,7 +430,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Success.
-		return true;
+		return 0;
 	}
 
 
@@ -438,18 +438,18 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 	else if (strcmp(buffer_ptr, CONFIG_TERMINATOR_ATTRIBUTE) == 0)
 	{
 		// Done.
-		return true;
+		return 0;
 	}
 
 
 	// No mapping.
 	printf("\n\nNo OS attribute for: %s\n\n", buffer_ptr);
-	return false;
+	return 1;
 }
 
 
 // Get memory unit multiplier.
-bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
+int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 {
 	// Counter.
 	unsigned int i = 0;
@@ -463,7 +463,7 @@ bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 		if (item == 0 || i == 64)
 		{
 			// Abort.
-			return false;
+			return 1;
 		}
 
 
@@ -496,7 +496,7 @@ bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 
 			// Abort.
-			return false;
+			return 1;
 		}
 
 
@@ -541,7 +541,7 @@ bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 
 		// Abort.
-		return false;
+		return 1;
 	}
 
 
@@ -550,7 +550,7 @@ bool get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 

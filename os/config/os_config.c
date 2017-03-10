@@ -8,7 +8,7 @@
 
 
 // Initialize.
-bool init_config(os_config* this)
+int init_config(os_config* this)
 {
 	// Default initialize all fields.
 	this->log_dest = TO_BOTH;
@@ -29,7 +29,7 @@ bool init_config(os_config* this)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 

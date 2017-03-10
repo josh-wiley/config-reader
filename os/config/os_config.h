@@ -5,7 +5,6 @@
 
 // Headers.
 #include <stdlib.h>
-#include "../../bool/bool.h"
 
 
 // Definitions.
@@ -41,7 +40,7 @@ typedef struct
 
 
 // Function prototypes.
-bool init_config(os_config*);
+int init_config(os_config*);
 
 
 // End header guard.

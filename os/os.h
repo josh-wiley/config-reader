@@ -6,8 +6,7 @@
 // Headers.
 #include <stdlib.h>
 #include <string.h>
-#include "../bool/bool.h"
-#include "../file_io/file_io.h"
+#include "../utils/file_io/file_io.h"
 #include "config/os_config.h"
 #include "mem_man/mem_man.h"
 #include "pcb/pcb.h"
@@ -27,7 +26,7 @@ typedef struct {
 
 
 // Function prototypes.
-bool configure(os*, char*);
+int configure(os*, char*);
 
 
 // End header guard.

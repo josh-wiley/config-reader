@@ -18,7 +18,7 @@ FILE* open_file(char* file_path, char* mode)
 	if (!file_ptr)
 	{
 		// Alert and exit.
-		printf("\n\nFILE ACCESS FAILED: %s\n\n", file_path);
+		printf("\n\nFailed to access file at %s\n\n", file_path);
 		return NULL;
 	}
 
@@ -29,13 +29,17 @@ FILE* open_file(char* file_path, char* mode)
 
 
 // Read until.
-bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
+int read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delimiter)
 {
 	// Cannot read?
 	if (!file_ptr || feof(file_ptr) || ferror(file_ptr))
 	{
+		// Alert.
+		printf("\n\nCannot read from file provided...\n\n");
+
+
 		// Done.
-		return false;
+		return 1;
 	}
 
 
@@ -50,8 +54,12 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 		// EOF?
 		if (feof(file_ptr))
 		{
+			// Alert.
+			printf("\n\nReached EOF before delimiter was reached...\n\n");
+
+
 			// Abort.
-			return false;
+			return 1;
 		}
 
 
@@ -60,65 +68,56 @@ bool read_until(FILE* file_ptr, char* buffer_ptr, size_t buffer_size, char delim
 	}
 
 
-	// Delimiter?
-	if (unit == delimiter)
-	{
-		// Terminator.
-		buffer_ptr[i] = '\0';
-
-
-		// Done.
-		return true;
-	}
-
-
-	// Save first character to buffer, then increment.
-	buffer_ptr[i++] = unit;
-
-
 	// Read into buffer.
 	while (i < buffer_size)
 	{
-		// EOF?
-		if (feof(file_ptr))
+		// Delimiter?
+		if (unit == delimiter)
 		{
-			// Abort.
-			return false;
+			// Terminate buffer.
+			buffer_ptr[i] = '\0';
+
+
+			// Done.
+			return 0;
 		}
+
+
+		// Save, then increment.
+		buffer_ptr[i++] = unit;
 
 
 		// Get next char.
 		unit = fgetc(file_ptr);
 
 
-		// Delimiter?
-		if (unit == delimiter)
+		// EOF?
+		if (feof(file_ptr))
 		{
-			// Terminator.
-			buffer_ptr[i] = '\0';
+			// Alert.
+			printf("\n\nReached EOF before delimiter was reached...\n\n");
 
 
-			// Done.
-			return true;
+			// Abort.
+			return 1;
 		}
-
-
-		// Save, then increment.
-		buffer_ptr[i++] = unit;
 	}
 
 
 	// Done.
-	return true;
+	return 0;
 }
 
 
 // Close file.
-bool close_file(FILE* file_ptr)
+void close_file(FILE* file_ptr)
 {
-	// Close and return.
+	// Close.
 	fclose(file_ptr);
-	return true;
+
+
+	// Return.
+	return;
 }
 
 

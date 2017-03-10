@@ -6,9 +6,8 @@
 // Headers.
 #include <stdio.h>
 #include <stdlib.h>
-#include "../lib/bool/bool.h"
-#include "../lib/os/os.h"
-#include "../lib/os/prog_exec/prog_exec.h"
+#include "os/os.h"
+#include "os/prog_exec/prog_exec.h"
 
 
 // Program entry.
@@ -23,22 +22,30 @@ int main(int num_args, char** args)
 
 
     // Configure OS.
-    if (!configure(&os, file_path))
+    if (configure(&os, file_path))
     {
+        // Alert.
+        printf("\n\nOS configuration failed.\n\n");
+
+
         // Abort.
         return 1;
     }
 
-
+    
     // Execute program.
-    if (!exec(&os))
+    if (exec(&os))
     {
+        // Alert.
+        printf("\n\nProgram execution failed.\n\n");
+
+
         // Abort.
         return 1;
     }
     
 
-    // Exit (no error).
+    // Exit.
     return 0;
 }
 

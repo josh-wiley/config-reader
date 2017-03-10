@@ -5,8 +5,7 @@
 
 // Headers.
 #include <string.h>
-#include "../../bool/bool.h"
-#include "../../file_io/file_io.h"
+#include "../../utils/file_io/file_io.h"
 #include "../config/os_config.h"
 #include "../prog_metadata/prog_metadata.h"
 #include "metadata_tokens.h"
@@ -31,8 +30,8 @@ typedef struct
 
 
 // Function prototypes.
-bool create_pcb(pcb*, char*);
-bool terminate_pcb(pcb*);
+int create_pcb(pcb*, char*);
+int terminate_pcb(pcb*);
 pcb_state get_state(pcb*);
 void set_state(pcb*, pcb_state);
 

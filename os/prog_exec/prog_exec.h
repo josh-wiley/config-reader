@@ -15,9 +15,8 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <pthread.h>
-#include "../../bool/bool.h"
-#include "../../file_io/file_io.h"
-#include "../../logger/logger.h"
+#include "../../utils/file_io/file_io.h"
+#include "../../utils/logger/logger.h"
 #include "../os.h"
 
 
@@ -26,7 +25,7 @@
 
 
 // Function prototypes.
-bool exec(os*);
+int exec(os*);
 
 
 // End header guard.

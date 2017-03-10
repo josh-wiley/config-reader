@@ -8,21 +8,21 @@
 
 
 // Function prototypes.
-bool log_os_to_file(os*, unsigned int*);
-bool log_os_to_display(os*, unsigned int*);
-bool log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
-bool log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
-bool log_metadata_begin_op_to_display(prog_metadata*, double);
-bool log_metadata_end_op_to_display(os*, prog_metadata*, double);
-bool compute_metadata_metrics(os*, unsigned int*);
+int log_os_to_file(os*, unsigned int*);
+int log_os_to_display(os*, unsigned int*);
+int log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
+int log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
+int log_metadata_begin_op_to_display(prog_metadata*, double);
+int log_metadata_end_op_to_display(os*, prog_metadata*, double);
+int compute_metadata_metrics(os*, unsigned int*);
 
 
 
 // Log OS config.
-bool log_os(os* os_ptr)
+int log_os(os* os_ptr)
 {
 	// Variables.
-	bool was_successful = false;
+	int was_successful = 1;
 	unsigned int* cycles_per_metadata_ptr = NULL;
 
 
@@ -74,7 +74,7 @@ bool log_os(os* os_ptr)
 
 		// Default.
 		default:
-			was_successful = false;
+			was_successful = 1;
 	}
 
 
@@ -92,7 +92,7 @@ bool log_os(os* os_ptr)
 
 
 // Log metadata begin operation.
-bool log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Declare stream pointer.
 	FILE* stream_ptr;
@@ -132,13 +132,13 @@ bool log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, d
 		default:
 			// Abort.
 			printf("\n\nInvalid log destination in OS config.\n\n");
-			return false;
+			return 1;
 	}
 }
 
 
 // Log metadata end operation.
-bool log_metadata_end_op(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_end_op(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Declare stream pointer.
 	FILE* stream_ptr;
@@ -178,13 +178,13 @@ bool log_metadata_end_op(os* os_ptr, prog_metadata* metadata_ptr, double elapsed
 		default:
 			// Abort.
 			printf("\n\nInvalid log destination in OS config.\n\n");
-			return false;
+			return 1;
 	}
 }
 
 
 // Log to file.
-bool log_os_to_file(os* os_ptr, unsigned int* cycles_ptr)
+int log_os_to_file(os* os_ptr, unsigned int* cycles_ptr)
 {
 	// Convenience.
 	os_config* config_ptr = &os_ptr->config;
@@ -198,7 +198,7 @@ bool log_os_to_file(os* os_ptr, unsigned int* cycles_ptr)
 	if (!file_ptr)
 	{
 		// Abort.
-		return false;
+		return 1;
 	}
 
 
@@ -253,13 +253,13 @@ bool log_os_to_file(os* os_ptr, unsigned int* cycles_ptr)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 
 
 // Log to display.
-bool log_os_to_display(os* os_ptr, unsigned int* cycles_ptr)
+int log_os_to_display(os* os_ptr, unsigned int* cycles_ptr)
 {
 	// Convenience.
 	os_config* config_ptr = &os_ptr->config;
@@ -319,12 +319,12 @@ bool log_os_to_display(os* os_ptr, unsigned int* cycles_ptr)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 
 // Log metadata begin operation to file.
-bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -337,20 +337,20 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 				// Start.
 				case START:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OS_START_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OS_END_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 
 
@@ -362,20 +362,20 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 				// Start.
 				case START:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, APPLICATION_END_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 		
 
@@ -386,13 +386,13 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 			{
 				// Log.
 				fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_BEGIN_MESSAGE);
-				return true;
+				return 0;
 			}
 
 
 			// Abort.
 			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-			return false;
+			return 1;
 		
 
 		// Memory.
@@ -403,20 +403,20 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 				// Allocate.
 				case ALLOCATE:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_ALLOCATE_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// Block.
 				case BLOCK:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 			
 
@@ -433,20 +433,20 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 						// Input.
 						case INPUT:
 							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Output.
 						case OUTPUT:
 							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Default.
 						default:
 							// Abort.
 							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-							return false;
+							return 1;
 					}
 				
 
@@ -457,13 +457,13 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Mouse.
@@ -473,13 +473,13 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Monitor.
@@ -489,13 +489,13 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Speaker.
@@ -505,13 +505,13 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Printer.
@@ -521,27 +521,27 @@ bool log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, 
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 	}
 }
 
 
 // Log metadata end operation to file.
-bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -554,14 +554,14 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 				// Start or end?.
 				case START:
 				case END:
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 
 
@@ -573,19 +573,19 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 				// Start.
 				case START:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_END_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 		
 
@@ -596,13 +596,13 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 			{
 				// Log.
 				fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_END_MESSAGE);
-				return true;
+				return 0;
 			}
 
 
 			// Abort.
 			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-			return false;
+			return 1;
 		
 
 		// Memory.
@@ -619,20 +619,20 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
 						alloc_mem(&os_ptr->memory_manager)
 					);
-					return true;
+					return 0;
 
 
 				// Block.
 				case BLOCK:
 					fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_END_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 			
 
@@ -649,20 +649,20 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 						// Input.
 						case INPUT:
 							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_END_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Output.
 						case OUTPUT:
 							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_END_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Default.
 						default:
 							// Abort.
 							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-							return false;
+							return 1;
 					}
 				
 
@@ -673,13 +673,13 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Mouse.
@@ -689,13 +689,13 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Monitor.
@@ -705,13 +705,13 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Speaker.
@@ -721,13 +721,13 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Printer.
@@ -737,27 +737,27 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 					{
 						// Log.
 						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 	}
 }
 
 
 // Log metadata begin operation to display.
-bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -770,20 +770,20 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 				// Start.
 				case START:
 					printf("\n\n%f - %s\n\n", elapsed_time, OS_START_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
 					printf("\n\n%f - %s\n\n", elapsed_time, OS_END_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 
 
@@ -795,20 +795,20 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 				// Start.
 				case START:
 					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
 					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_END_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 		
 
@@ -819,13 +819,13 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 			{
 				// Log.
 				printf("\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_BEGIN_MESSAGE);
-				return true;
+				return 0;
 			}
 
 
 			// Abort.
 			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-			return false;
+			return 1;
 		
 
 		// Memory.
@@ -836,20 +836,20 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 				// Allocate.
 				case ALLOCATE:
 					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_ALLOCATE_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 
 				// Block.
 				case BLOCK:
 					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_BEGIN_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 			
 
@@ -866,20 +866,20 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 						// Input.
 						case INPUT:
 							printf("\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Output.
 						case OUTPUT:
 							printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Default.
 						default:
 							// Abort.
 							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-							return false;
+							return 1;
 					}
 				
 
@@ -890,13 +890,13 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Mouse.
@@ -906,13 +906,13 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Monitor.
@@ -922,13 +922,13 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Speaker.
@@ -938,13 +938,13 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Printer.
@@ -954,27 +954,27 @@ bool log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapse
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 	}
 }
 
 
 // Log metadata end operation to display.
-bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -987,14 +987,14 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 				// Start or end?.
 				case START:
 				case END:
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 
 
@@ -1006,19 +1006,19 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 				// Start.
 				case START:
 					printf("\n\n%f - %s\n\n", elapsed_time, APPLICATION_START_OP_END_MESSAGE);
-					return true;
+					return 0;
 
 
 				// End.
 				case END:
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 		
 
@@ -1029,13 +1029,13 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 			{
 				// Log.
 				printf("\n\n%f - %s\n\n", elapsed_time, PROCESS_RUN_OP_END_MESSAGE);
-				return true;
+				return 0;
 			}
 
 
 			// Abort.
 			printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-			return false;
+			return 1;
 		
 
 		// Memory.
@@ -1051,20 +1051,20 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
 						alloc_mem(&os_ptr->memory_manager)
 					);
-					return true;
+					return 0;
 
 
 				// Block.
 				case BLOCK:
 					printf("\n\n%f - %s\n\n", elapsed_time, MEMORY_BLOCK_OP_END_MESSAGE);
-					return true;
+					return 0;
 
 				
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 			
 
@@ -1081,20 +1081,20 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 						// Input.
 						case INPUT:
 							printf("\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_END_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Output.
 						case OUTPUT:
 							printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_END_MESSAGE);
-							return true;
+							return 0;
 
 
 						// Default.
 						default:
 							// Abort.
 							printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-							return false;
+							return 1;
 					}
 				
 
@@ -1105,13 +1105,13 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Mouse.
@@ -1121,13 +1121,13 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Monitor.
@@ -1137,13 +1137,13 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 				
 				
 				// Speaker.
@@ -1153,13 +1153,13 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Printer.
@@ -1169,27 +1169,27 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 					{
 						// Log.
 						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_END_MESSAGE);
-						return true;
+						return 0;
 					}
 
 
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_CODE_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 
 
 				// Default.
 				default:
 					// Abort.
 					printf("\n\n%s\n\n", INVALID_DESCRIPTOR_RUNTIME_ERROR_MESSAGE);
-					return false;
+					return 1;
 			}
 	}
 }
 
 
 // Compute metadata metrics.
-bool compute_metadata_metrics(os* os_ptr, unsigned int* cycles_ptr)
+int compute_metadata_metrics(os* os_ptr, unsigned int* cycles_ptr)
 {
 	// Variables.
 	unsigned int max = os_ptr->pcb.num_metadata;
@@ -1273,13 +1273,13 @@ bool compute_metadata_metrics(os* os_ptr, unsigned int* cycles_ptr)
 					ERROR COMPUTING TIME FOR METATADATA %u\
 					\n\n", i + 1
 				);
-				return false;
+				return 1;
 		}
 	}
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 

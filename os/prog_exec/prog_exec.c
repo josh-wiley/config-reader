@@ -13,7 +13,7 @@ void* ms_sleep(void*);
 
 
 // Execute program.
-bool exec(os* os_ptr)
+int exec(os* os_ptr)
 {
 	// PCB pointer, log path, and metadata pointer.
 	pcb* pcb_ptr = &os_ptr->pcb;
@@ -84,6 +84,9 @@ bool exec(os* os_ptr)
 		// I/O?
 		if (metadata_ptr->code == INPUT || metadata_ptr->code == OUTPUT)
 		{
+			// Acquire device.
+
+			
 			// Set PCB state.
 			set_state(pcb_ptr, WAITING);
 
@@ -120,7 +123,7 @@ bool exec(os* os_ptr)
 
 
 	// Success.
-	return true;
+	return 0;
 }
 
 

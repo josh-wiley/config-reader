@@ -5,13 +5,12 @@
 
 // Headers.
 #include <stdio.h>
-#include "../bool/bool.h"
 
 
 // Function Prototypes.
 FILE* open_file(char*, char*);
-bool read_until(FILE*, char*, size_t, char);
-bool close_file(FILE*);
+int read_until(FILE*, char*, size_t, char);
+void close_file(FILE*);
 
 
 // End header guard.
