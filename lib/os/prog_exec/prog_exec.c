@@ -49,6 +49,15 @@ bool exec(os* os_ptr)
 	void* thread_status_ptr;
 
 
+	// Declare semaphore.
+	sem_t semaphore;
+
+
+	// Initialize mutex and semaphore.
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	sem_init(&semaphore, 0, 0);
+
+
 	// TODO: REMOVE
 	printf("\n\nBeginning program simulation...\n\n");
 
@@ -107,6 +116,11 @@ bool exec(os* os_ptr)
 
 	// Terminate PCB.
 	terminate_pcb(pcb_ptr);
+
+
+	// Destroy mutex and semaphore.
+	pthread_mutex_destroy(&mutex);
+	sem_destroy(&semaphore);
 
 
 	// Success.

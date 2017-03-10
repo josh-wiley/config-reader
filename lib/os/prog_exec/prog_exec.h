@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <semaphore.h>
 #include <pthread.h>
 #include "../../bool/bool.h"
 #include "../../file_io/file_io.h"
