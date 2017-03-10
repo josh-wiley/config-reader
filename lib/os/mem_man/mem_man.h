@@ -4,7 +4,6 @@
 
 
 // Headers.
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
@@ -14,7 +13,7 @@
 // Memory management unit.
 typedef struct {
 	unsigned int total_mem_bytes;
-	unsigned int block_size;
+	unsigned int block_size_bytes;
 	unsigned int blocks_allocated;
 } mem_man;
 

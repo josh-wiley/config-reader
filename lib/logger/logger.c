@@ -614,7 +614,7 @@ bool log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* meta
 				case ALLOCATE:
 					fprintf(
 						file_ptr,
-						"\n\n%f - %s %x\n\n",
+						"\n\n%f - %s 0x%08x\n\n",
 						elapsed_time,
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
 						alloc_mem(&os_ptr->memory_manager)
@@ -1046,7 +1046,7 @@ bool log_metadata_end_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, dou
 				// Allocate.
 				case ALLOCATE:
 					printf(
-						"\n\n%f - %s %x\n\n",
+						"\n\n%f - %s 0x%08x\n\n",
 						elapsed_time,
 						MEMORY_ALLOCATE_OP_END_MESSAGE,
 						alloc_mem(&os_ptr->memory_manager)

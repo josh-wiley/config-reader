@@ -166,7 +166,7 @@ bool map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Save.
-		this->memory_manager.block_size = multiplier * atoi(buffer_ptr);
+		this->memory_manager.block_size_bytes = multiplier * atoi(buffer_ptr);
 
 
 		// Success.

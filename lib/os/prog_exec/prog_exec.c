@@ -58,10 +58,6 @@ bool exec(os* os_ptr)
 	sem_init(&semaphore, 0, 0);
 
 
-	// TODO: REMOVE
-	printf("\n\nBeginning program simulation...\n\n");
-
-
 	// Simulate on metadata.
 	for (unsigned int i = 0; i < pcb_ptr->num_metadata; i++)
 	{
