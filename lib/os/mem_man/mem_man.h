@@ -3,13 +3,6 @@
 #define LIB_OS_MEM_MAN_H_
 
 
-// Headers.
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#include "../config/os_config.h"
-
-
 // Memory management unit.
 typedef struct {
 	unsigned int total_mem_bytes;
