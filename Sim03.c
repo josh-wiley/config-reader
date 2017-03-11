@@ -22,7 +22,7 @@ int main(int num_args, char** args)
 
 
     // Configure OS.
-    if (configure(&os, file_path))
+    if (configure_os(&os, file_path))
     {
         // Alert.
         printf("\n\nOS configuration failed.\n\n");
@@ -43,6 +43,10 @@ int main(int num_args, char** args)
         // Abort.
         return 1;
     }
+
+
+    // Destroy OS.
+    destroy_os(&os);
     
 
     // Exit.

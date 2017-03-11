@@ -7,246 +7,139 @@
 #include "io_man.h"
 
 
+// Function prototypes.
+sem_t* get_sem(io_man*, device_code);
+pthread_mutex_t* get_mutex(io_man*, device_code);
+
+
 // Init.
 void init_io_man(io_man* this)
 {
-    // Default initialize semaphores.
+    // Initialize semaphores.
     sem_init(&this->mouse_sem, 0, 1);
     sem_init(&this->keyboard_sem, 0, 1);
     sem_init(&this->hdd_sem, 0, 1);
     sem_init(&this->printer_sem, 0, 1);
     sem_init(&this->monitor_sem, 0, 1);
     sem_init(&this->speaker_sem, 0, 1);
+
+
+    // Initialize mutexes.
+    pthread_mutex_init(&this->mouse_mutex, NULL);
+    pthread_mutex_init(&this->keyboard_mutex, NULL);
+    pthread_mutex_init(&this->hdd_mutex, NULL);
+    pthread_mutex_init(&this->printer_mutex, NULL);
+    pthread_mutex_init(&this->monitor_mutex, NULL);
+    pthread_mutex_init(&this->speaker_mutex, NULL);
+}
+
+
+// Destroy.
+void destroy_io_man(io_man* this)
+{
+    // Destroy semaphores.
+    sem_destroy(&this->mouse_sem);
+    sem_destroy(&this->keyboard_sem);
+    sem_destroy(&this->hdd_sem);
+    sem_destroy(&this->printer_sem);
+    sem_destroy(&this->monitor_sem);
+    sem_destroy(&this->speaker_sem);
+
+
+    // Destroy mutexes.
+    pthread_mutex_destroy(&this->mouse_mutex);
+    pthread_mutex_destroy(&this->keyboard_mutex);
+    pthread_mutex_destroy(&this->hdd_mutex);
+    pthread_mutex_destroy(&this->printer_mutex);
+    pthread_mutex_destroy(&this->monitor_mutex);
+    pthread_mutex_destroy(&this->speaker_mutex);
 }
 
 
 // Set available.
 int set_available(io_man* this, device_code device, unsigned int available)
 {
-    // Switch on device code.
-    switch (device)
-    {
-        // Mouse.
-        case MOUSE:
-            // Set.
-            sem_init(&this->mouse_sem, 0, available);
-
-
-            // Done.
-            return 0;
-        
-
-        // Keyboard.
-        case KEYBOARD:
-            // Set.
-            sem_init(&this->keyboard_sem, 0, available);
-
-
-            // Done.
-            return 0;
-
-        
-        // HDD.
-        case HDD:
-            // Set.
-            sem_init(&this->hdd_sem, 0, available);
-
-
-            // Done.
-            return 0;
-
-
-        // Printer.
-        case PRINTER:
-            // Set.
-            sem_init(&this->printer_sem, 0, available);
-
-
-            // Done.
-            return 0;
-
-
-        // Monitor.
-        case MONITOR:
-            // Set.
-            sem_init(&this->monitor_sem, 0, available);
-
-
-            // Done.
-            return 0;
-
-
-        // Speaker.
-        case SPEAKER:
-            // Set.
-            sem_init(&this->speaker_sem, 0, available);
-
-
-            // Done.
-            return 0;
-
-
-        default:
-            // Alert.
-            printf("\n\nInvalid device code used to set available devices.\n\n");
-
-
-            // Abort.
-            return 1;
-    }
+    // Re-initialize appropriate semaphore.
+    return sem_init(get_sem(this, device), 0, available);
 }
 
 
 // Acquire device.
 int acquire(io_man* this, device_code device)
 {
-    // Switch on device code.
-    switch (device)
-    {
-        // Mouse.
-        case MOUSE:
-            // Get.
-            sem_wait(&this->mouse_sem);
-
-
-            // Done.
-            return 0;
-        
-
-        // Keyboard.
-        case KEYBOARD:
-            // Get.
-            sem_wait(&this->keyboard_sem);
-
-
-            // Done.
-            return 0;
-
-        
-        // HDD.
-        case HDD:
-            // Get.
-            sem_wait(&this->hdd_sem);
-
-
-            // Done.
-            return 0;
-
-
-        // Printer.
-        case PRINTER:
-            // Get.
-            sem_wait(&this->printer_sem);
-
-
-            // Done.
-            return 0;
-
-
-        // Monitor.
-        case MONITOR:
-            // Get.
-            sem_wait(&this->monitor_sem);
-
-
-            // Done.
-            return 0;
-
-
-        // Speaker.
-        case SPEAKER:
-            // Get.
-            sem_wait(&this->speaker_sem);
-
-
-            // Done.
-            return 0;
-
-
-        default:
-            // Alert.
-            printf("\n\nInvalid device code used to set available devices.\n\n");
-
-
-            // Abort.
-            return 1;
-    }
+    // Get device from pool.
+    return sem_wait(get_sem(this, device)) && pthread_mutex_lock(get_mutex(this, device));
 }
 
 
 // Release device.
 int release(io_man* this, device_code device)
 {
+    // Post to semaphore.
+    return sem_post(get_sem(this, device)) && pthread_mutex_unlock(get_mutex(this, device));
+}
+
+
+// Get semaphore associated with device pool.
+sem_t* get_sem(io_man* this, device_code device)
+{
     // Switch on device code.
     switch (device)
     {
         // Mouse.
-        case MOUSE:
-            // Release.
-            sem_post(&this->mouse_sem);
-
-
-            // Done.
-            return 0;
+        case MOUSE: return &this->mouse_sem;
         
 
         // Keyboard.
-        case KEYBOARD:
-            // Release.
-            sem_post(&this->keyboard_sem);
-
-
-            // Done.
-            return 0;
+        case KEYBOARD: return &this->keyboard_sem;
 
         
         // HDD.
-        case HDD:
-            // Release.
-            sem_post(&this->hdd_sem);
-
-
-            // Done.
-            return 0;
+        case HDD: return &this->hdd_sem;
 
 
         // Printer.
-        case PRINTER:
-            // Release.
-            sem_post(&this->printer_sem);
-
-
-            // Done.
-            return 0;
-
-
-        // Monitor.
-        case MONITOR:
-            // Release.
-            sem_post(&this->monitor_sem);
-
-
-            // Done.
-            return 0;
+        case PRINTER: return &this->printer_sem;
 
 
         // Speaker.
-        case SPEAKER:
-            // Release.
-            sem_post(&this->speaker_sem);
+        case SPEAKER: return &this->speaker_sem;
 
 
-            // Done.
-            return 0;
+        // By default, return the monitor.
+        default: return &this->monitor_sem;
+    }
+}
 
 
-        default:
-            // Alert.
-            printf("\n\nInvalid device code used to set available devices.\n\n");
+// Get mutex associated with device pool.
+pthread_mutex_t* get_mutex(io_man* this, device_code device)
+{
+    // Switch on device code.
+    switch (device)
+    {
+        // Mouse.
+        case MOUSE: return &this->mouse_mutex;
+        
+
+        // Keyboard.
+        case KEYBOARD: return &this->keyboard_mutex;
+
+        
+        // HDD.
+        case HDD: return &this->hdd_mutex;
 
 
-            // Abort.
-            return 1;
+        // Printer.
+        case PRINTER: return &this->printer_mutex;
+
+
+        // Speaker.
+        case SPEAKER: return &this->speaker_mutex;
+
+
+        // By default, return the monitor.
+        default: return &this->monitor_mutex;
     }
 }
 

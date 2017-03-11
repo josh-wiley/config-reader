@@ -28,7 +28,8 @@ typedef struct {
 
 
 // Function prototypes.
-int configure(os*, char*);
+int configure_os(os*, char*);
+void destroy_os(os*);
 
 
 // End header guard.

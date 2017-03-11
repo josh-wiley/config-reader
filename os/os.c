@@ -12,14 +12,15 @@ int get_memory_unit_multiplier(char*, unsigned int*);
 
 
 // Configure OS.
-int configure(os* this, char* file_path)
+int configure_os(os* this, char* file_path)
 {
 	// Get stream.
 	FILE* stream_ptr = open_file(file_path, "r");
 
 
-	// Initialize config.
+	// Initialize config and I/O manager.
 	init_config(&this->config);
+	init_io_man(&this->io_manager);
 
 
 	// Buffer.
@@ -551,6 +552,14 @@ int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 	// Success.
 	return 0;
+}
+
+
+// Destroy OS.
+void destroy_os(os* this)
+{
+	// Destory I/O manager.
+	destroy_io_man(&this->io_manager);
 }
 
 

@@ -49,10 +49,6 @@ int exec(os* os_ptr)
 	void* thread_status_ptr;
 
 
-	// Initialize mutex.
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
-
 	// Simulate on metadata.
 	for (unsigned int i = 0; i < pcb_ptr->num_metadata; i++)
 	{
@@ -80,9 +76,7 @@ int exec(os* os_ptr)
 		if (metadata_ptr->code == INPUT || metadata_ptr->code == OUTPUT)
 		{
 			// Acquire device from appropriate pool.
-
-
-			// Lock.
+			acquire(&os_ptr->io_manager, metadata_ptr->descriptor);
 
 			
 			// Set PCB state.
@@ -92,6 +86,10 @@ int exec(os* os_ptr)
 			// Thread / sync.
 			pthread_create(&thread_id, NULL, ms_sleep, (void*) &wait_time_ms);
 			pthread_join(thread_id, &thread_status_ptr);
+
+
+			// Release.
+			release(&os_ptr->io_manager, metadata_ptr->descriptor);
 		}
 
 
@@ -113,10 +111,6 @@ int exec(os* os_ptr)
 
 	// Terminate PCB.
 	terminate_pcb(pcb_ptr);
-
-
-	// Destroy mutex.
-	pthread_mutex_destroy(&mutex);
 
 
 	// Success.

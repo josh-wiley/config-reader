@@ -6,6 +6,7 @@
 // Headers.
 #include <semaphore.h>
 #include "../prog_metadata/prog_metadata.h"
+#include <pthread.h>
 
 
 // Alias.
@@ -21,6 +22,12 @@ typedef struct
     sem_t printer_sem;
     sem_t monitor_sem;
     sem_t speaker_sem;
+    pthread_mutex_t mouse_mutex;
+    pthread_mutex_t keyboard_mutex;
+    pthread_mutex_t hdd_mutex;
+    pthread_mutex_t printer_mutex;
+    pthread_mutex_t monitor_mutex;
+    pthread_mutex_t speaker_mutex;
 } io_man;
 
 
@@ -29,6 +36,7 @@ void init_io_man(io_man*);
 int set_available(io_man*, device_code, unsigned int);
 int acquire(io_man*, device_code);
 int release(io_man*, device_code);
+void destroy_io_man(io_man*);
 
 
 // End header guard.
