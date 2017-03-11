@@ -10,15 +10,14 @@
 // Function prototypes.
 int log_os_to_file(os*, unsigned int*);
 int log_os_to_display(os*, unsigned int*);
-int log_metadata_begin_op_to_file(FILE*, prog_metadata*, double);
+int log_metadata_begin_op_to_file(FILE*, os*, prog_metadata*, double);
 int log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
-int log_metadata_begin_op_to_display(prog_metadata*, double);
+int log_metadata_begin_op_to_display(os*, prog_metadata*, double);
 int log_metadata_end_op_to_display(os*, prog_metadata*, double);
 int compute_metadata_metrics(os*, unsigned int*);
 
 
-
-// Log OS config.
+// Log OS.
 int log_os(os* os_ptr)
 {
 	// Variables.
@@ -92,8 +91,12 @@ int log_os(os* os_ptr)
 
 
 // Log metadata begin operation.
-int log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
+	// Convenience.
+	os_config* config_ptr = &os_ptr->config;
+
+
 	// Declare stream pointer.
 	FILE* stream_ptr;
 
@@ -108,8 +111,8 @@ int log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, do
 
 
 			// Log to both.
-			return log_metadata_begin_op_to_display(metadata_ptr, elapsed_time) &&
-				log_metadata_begin_op_to_file(stream_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_begin_op_to_display(os_ptr, metadata_ptr, elapsed_time) &&
+				log_metadata_begin_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to file.
@@ -119,13 +122,13 @@ int log_metadata_begin_op(os_config* config_ptr, prog_metadata* metadata_ptr, do
 
 
 			// Log to file.
-			return log_metadata_begin_op_to_file(stream_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_begin_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Log to display.
 		case TO_DISPLAY:
 			// Log to display.
-			return log_metadata_begin_op_to_display(metadata_ptr, elapsed_time);
+			return log_metadata_begin_op_to_display(os_ptr, metadata_ptr, elapsed_time);
 		
 
 		// Default.
@@ -324,7 +327,7 @@ int log_os_to_display(os* os_ptr, unsigned int* cycles_ptr)
 
 
 // Log metadata begin operation to file.
-int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -432,13 +435,28 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					{
 						// Input.
 						case INPUT:
-							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
+							// Write.
+							fprintf(
+								file_ptr,
+								"\n\n%f - %s %u\n\n",
+								elapsed_time,
+								INPUT_HDD_OP_BEGIN_MESSAGE,
+								os_ptr->config.total_hdds - get_available(&os_ptr->io_manager, HDD) + 1
+							);
+
+
+							// Done.
 							return 0;
 
 
 						// Output.
 						case OUTPUT:
-							fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
+							fprintf(
+								file_ptr, "\n\n%f - %s %u\n\n",
+								elapsed_time,
+								OUTPUT_HDD_OP_BEGIN_MESSAGE,
+								os_ptr->config.total_hdds - get_available(&os_ptr->io_manager, HDD) + 1
+							);
 							return 0;
 
 
@@ -455,8 +473,17 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					// Input?
 					if (metadata_ptr->code == INPUT)
 					{
-						// Log.
-						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
+						// Write.
+						fprintf(
+							file_ptr,
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							INPUT_KEYBOARD_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_keyboards - get_available(&os_ptr->io_manager, KEYBOARD) + 1
+						);
+
+
+						// Done.
 						return 0;
 					}
 
@@ -471,8 +498,17 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					// Input?
 					if (metadata_ptr->code == INPUT)
 					{
-						// Log.
-						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
+						// Write.
+						fprintf(
+							file_ptr,
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							INPUT_MOUSE_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_mice - get_available(&os_ptr->io_manager, MOUSE) + 1
+						);
+						
+
+						// Done.
 						return 0;
 					}
 
@@ -487,8 +523,14 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
+						// Write.
+						fprintf(
+							file_ptr,
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_MONITOR_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_monitors - get_available(&os_ptr->io_manager, MONITOR) + 1
+						);
 						return 0;
 					}
 
@@ -503,8 +545,14 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
+						// Write.
+						fprintf(
+							file_ptr,
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_SPEAKER_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_speakers - get_available(&os_ptr->io_manager, SPEAKER) + 1
+						);
 						return 0;
 					}
 
@@ -519,8 +567,17 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, prog_metadata* metadata_ptr, d
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						fprintf(file_ptr, "\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
+						// Write.
+						fprintf(
+							file_ptr,
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_PRINTER_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_printers - get_available(&os_ptr->io_manager, PRINTER) + 1
+						);
+						
+						
+						// Done.
 						return 0;
 					}
 
@@ -757,7 +814,7 @@ int log_metadata_end_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* metad
 
 
 // Log metadata begin operation to display.
-int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed_time)
+int log_metadata_begin_op_to_display(os* os_ptr, prog_metadata* metadata_ptr, double elapsed_time)
 {
 	// Switch on op code.
 	switch (metadata_ptr->code)
@@ -865,13 +922,31 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					{
 						// Input.
 						case INPUT:
-							printf("\n\n%f - %s\n\n", elapsed_time, INPUT_HDD_OP_BEGIN_MESSAGE);
+							// Write.
+							printf(
+								"\n\n%f - %s %u\n\n",
+								elapsed_time,
+								INPUT_HDD_OP_BEGIN_MESSAGE,
+								os_ptr->config.total_hdds - get_available(&os_ptr->io_manager, HDD) + 1
+							);
+
+
+							// Done.
 							return 0;
 
 
 						// Output.
 						case OUTPUT:
-							printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_HDD_OP_BEGIN_MESSAGE);
+							// Write.
+							printf(
+								"\n\n%f - %s %u\n\n",
+								elapsed_time,
+								OUTPUT_HDD_OP_BEGIN_MESSAGE,
+								os_ptr->config.total_hdds - get_available(&os_ptr->io_manager, HDD) + 1
+							);
+
+
+							// Done.
 							return 0;
 
 
@@ -888,8 +963,16 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					// Input?
 					if (metadata_ptr->code == INPUT)
 					{
-						// Log.
-						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_KEYBOARD_OP_BEGIN_MESSAGE);
+						// Write.
+						printf(
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							INPUT_KEYBOARD_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_keyboards - get_available(&os_ptr->io_manager, KEYBOARD) + 1
+						);
+
+
+						// Done.
 						return 0;
 					}
 
@@ -904,8 +987,16 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					// Input?
 					if (metadata_ptr->code == INPUT)
 					{
-						// Log.
-						printf("\n\n%f - %s\n\n", elapsed_time, INPUT_MOUSE_OP_BEGIN_MESSAGE);
+						// Write.
+						printf(
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							INPUT_MOUSE_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_mice - get_available(&os_ptr->io_manager, MOUSE) + 1
+						);
+
+
+						// Done.
 						return 0;
 					}
 
@@ -920,8 +1011,16 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_MONITOR_OP_BEGIN_MESSAGE);
+						// Write.
+						printf(
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_MONITOR_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_monitors - get_available(&os_ptr->io_manager, MONITOR) + 1
+						);
+
+
+						// Done.
 						return 0;
 					}
 
@@ -936,8 +1035,16 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_SPEAKER_OP_BEGIN_MESSAGE);
+						// Write.
+						printf(
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_SPEAKER_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_speakers - get_available(&os_ptr->io_manager, SPEAKER) + 1
+						);
+
+
+						// Done.
 						return 0;
 					}
 
@@ -952,8 +1059,13 @@ int log_metadata_begin_op_to_display(prog_metadata* metadata_ptr, double elapsed
 					// Output?
 					if (metadata_ptr->code == OUTPUT)
 					{
-						// Log.
-						printf("\n\n%f - %s\n\n", elapsed_time, OUTPUT_PRINTER_OP_BEGIN_MESSAGE);
+						// Write.
+						printf(
+							"\n\n%f - %s %u\n\n",
+							elapsed_time,
+							OUTPUT_PRINTER_OP_BEGIN_MESSAGE,
+							os_ptr->config.total_printers - get_available(&os_ptr->io_manager, PRINTER) + 1
+						);
 						return 0;
 					}
 

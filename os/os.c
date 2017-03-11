@@ -18,9 +18,8 @@ int configure_os(os* this, char* file_path)
 	FILE* stream_ptr = open_file(file_path, "r");
 
 
-	// Initialize config and I/O manager.
+	// Initialize config.
 	init_config(&this->config);
-	init_io_man(&this->io_manager);
 
 
 	// Buffer.
@@ -44,6 +43,10 @@ int configure_os(os* this, char* file_path)
 			return 1;
 		}
 	}
+
+
+	// Initialize I/O manager with new config.
+	init_io_man(&this->io_manager, &this->config);
 
 
 	// Checkpoint.
@@ -199,7 +202,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Set.
-		set_available(&this->io_manager, HDD, atoi(buffer_ptr));
+		this->config.total_hdds = atoi(buffer_ptr);
 
 
 		// Success.
@@ -231,7 +234,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 		
 		// Set.
-		set_available(&this->io_manager, KEYBOARD, atoi(buffer_ptr));
+		this->config.total_keyboards = atoi(buffer_ptr);
 
 
 		// Success.
@@ -263,7 +266,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 		
 		// Set.
-		set_available(&this->io_manager, MOUSE, atoi(buffer_ptr));
+		this->config.total_mice = atoi(buffer_ptr);
 
 
 		// Success.
@@ -295,7 +298,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 		
 		// Set.
-		set_available(&this->io_manager, MONITOR, atoi(buffer_ptr));
+		this->config.total_monitors = atoi(buffer_ptr);
 
 
 		// Success.
@@ -327,7 +330,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 		
 		// Set.
-		set_available(&this->io_manager, SPEAKER, atoi(buffer_ptr));
+		this->config.total_speakers = atoi(buffer_ptr);
 
 
 		// Success.
@@ -359,7 +362,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Set.
-		set_available(&this->io_manager, PRINTER, atoi(buffer_ptr));
+		this->config.total_printers = atoi(buffer_ptr);
 
 
 		// Success.

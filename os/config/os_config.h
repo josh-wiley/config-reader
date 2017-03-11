@@ -18,10 +18,14 @@ typedef enum { TO_BOTH, TO_FILE, TO_DISPLAY } destination;
 // OS config.
 typedef struct
 {
+	// Fields.
 	float version;
 	char metadata_file_path[STRING_SIZE];
 	char log_file_path[STRING_SIZE];
 	destination log_dest;
+
+
+	// Times.
 	unsigned int processor_period_ms;
 	unsigned int memory_period_ms;
 	unsigned int hdd_period_ms;
@@ -30,6 +34,15 @@ typedef struct
 	unsigned int printer_period_ms;
 	unsigned int keyboard_period_ms;
 	unsigned int mouse_period_ms;
+
+
+	// I/O devices.
+	unsigned int total_mice;
+	unsigned int total_keyboards;
+	unsigned int total_hdds;
+	unsigned int total_monitors;
+	unsigned int total_speakers;
+	unsigned int total_printers;
 } os_config;
 
 

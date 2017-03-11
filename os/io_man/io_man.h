@@ -5,6 +5,7 @@
 
 // Headers.
 #include <semaphore.h>
+#include "../config/os_config.h"
 #include "../prog_metadata/prog_metadata.h"
 #include <pthread.h>
 
@@ -32,11 +33,12 @@ typedef struct
 
 
 // Function prototypes.
-void init_io_man(io_man*);
+void init_io_man(io_man*, os_config*);
+void destroy_io_man(io_man*);
+unsigned int get_available(io_man*, device_code);
 int set_available(io_man*, device_code, unsigned int);
 int acquire(io_man*, device_code);
 int release(io_man*, device_code);
-void destroy_io_man(io_man*);
 
 
 // End header guard.

@@ -10,16 +10,28 @@
 // Initialize.
 void init_config(os_config* this)
 {
-	// Default initialize all fields.
+	// Initialize fields.
 	this->log_dest = TO_BOTH;
-	this->processor_period_ms = 0;
-	this->memory_period_ms = 0;
-	this->hdd_period_ms = 0;
-	this->monitor_period_ms = 0;
-	this->speaker_period_ms = 0;
-	this->printer_period_ms = 0;
-	this->keyboard_period_ms = 0;
+
+
+	// Initialize times.
+	this->processor_period_ms = 
+	this->memory_period_ms = 
+	this->hdd_period_ms = 
+	this->monitor_period_ms = 
+	this->speaker_period_ms = 
+	this->printer_period_ms = 
+	this->keyboard_period_ms = 
 	this->mouse_period_ms = 0;
+
+
+	// Initialize I/O devices.
+	this->total_mice = 
+	this->total_keyboards = 
+	this->total_hdds = 
+	this->total_speakers = 
+	this->total_monitors = 
+	this->total_printers = 1;
 }
 
 

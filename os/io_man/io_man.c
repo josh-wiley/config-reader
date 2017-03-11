@@ -13,15 +13,15 @@ pthread_mutex_t* get_mutex(io_man*, device_code);
 
 
 // Init.
-void init_io_man(io_man* this)
+void init_io_man(io_man* this, os_config* config_ptr)
 {
     // Initialize semaphores.
-    sem_init(&this->mouse_sem, 0, 1);
-    sem_init(&this->keyboard_sem, 0, 1);
-    sem_init(&this->hdd_sem, 0, 1);
-    sem_init(&this->printer_sem, 0, 1);
-    sem_init(&this->monitor_sem, 0, 1);
-    sem_init(&this->speaker_sem, 0, 1);
+    sem_init(&this->mouse_sem, 0, config_ptr->total_mice);
+    sem_init(&this->keyboard_sem, 0, config_ptr->total_keyboards);
+    sem_init(&this->hdd_sem, 0, config_ptr->total_hdds);
+    sem_init(&this->printer_sem, 0, config_ptr->total_printers);
+    sem_init(&this->monitor_sem, 0, config_ptr->total_monitors);
+    sem_init(&this->speaker_sem, 0, config_ptr->total_speakers);
 
 
     // Initialize mutexes.
@@ -53,6 +53,22 @@ void destroy_io_man(io_man* this)
     pthread_mutex_destroy(&this->printer_mutex);
     pthread_mutex_destroy(&this->monitor_mutex);
     pthread_mutex_destroy(&this->speaker_mutex);
+}
+
+
+// Get available.
+unsigned int get_available(io_man* this, device_code device)
+{
+    // Available.
+    int available;
+
+
+    // Get value.
+    sem_getvalue(get_sem(this, device), &available);
+
+
+    // Return.
+    return (unsigned int) available;
 }
 
 

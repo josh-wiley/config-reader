@@ -18,7 +18,7 @@
 
 // Function prototypes.
 int log_os(os*);
-int log_metadata_begin_op(os_config*, prog_metadata*, double);
+int log_metadata_begin_op(os*, prog_metadata*, double);
 int log_metadata_end_op(os*, prog_metadata*, double);
 
 

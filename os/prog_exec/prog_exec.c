@@ -58,7 +58,7 @@ int exec(os* os_ptr)
 
 		// Log begin operation.
 		log_metadata_begin_op(
-			config_ptr,
+			os_ptr,
 			&metadata_ptr[i],
 			(double) (clock() - start_clock) * 1000 / CLOCKS_PER_SEC // Elapsed time.
 		);
