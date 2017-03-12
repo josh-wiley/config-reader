@@ -8,8 +8,8 @@
 
 
 // Function prototypes.
-unsigned int get_op_time(os_config*, prog_metadata*);
-void* ms_sleep(void*);
+inline unsigned int get_op_time(os_config*, prog_metadata*);
+inline void* ms_sleep(void*);
 
 
 // Execute program.

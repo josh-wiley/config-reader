@@ -6,9 +6,10 @@
 // Headers.
 #include "os.h"
 
+
 // Function prototypes.
-int map_config(os*, char*, FILE*);
-int get_memory_unit_multiplier(char*, unsigned int*);
+inline int map_config(os*, char*, FILE*);
+inline int get_memory_unit_multiplier(char*, unsigned int*);
 
 
 // Configure OS.

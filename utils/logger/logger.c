@@ -8,13 +8,13 @@
 
 
 // Function prototypes.
-int log_os_to_file(os*, unsigned int*);
-int log_os_to_display(os*, unsigned int*);
-int log_metadata_begin_op_to_file(FILE*, os*, prog_metadata*, double);
-int log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
-int log_metadata_begin_op_to_display(os*, prog_metadata*, double);
-int log_metadata_end_op_to_display(os*, prog_metadata*, double);
-int compute_metadata_metrics(os*, unsigned int*);
+inline int log_os_to_file(os*, unsigned int*);
+inline int log_os_to_display(os*, unsigned int*);
+inline int log_metadata_begin_op_to_file(FILE*, os*, prog_metadata*, double);
+inline int log_metadata_end_op_to_file(FILE*, os*, prog_metadata*, double);
+inline int log_metadata_begin_op_to_display(os*, prog_metadata*, double);
+inline int log_metadata_end_op_to_display(os*, prog_metadata*, double);
+inline int compute_metadata_metrics(os*, unsigned int*);
 
 
 // Log OS.
@@ -111,8 +111,8 @@ int log_metadata_begin_op(os* os_ptr, prog_metadata* metadata_ptr, double elapse
 
 
 			// Log to both.
-			return log_metadata_begin_op_to_display(os_ptr, metadata_ptr, elapsed_time) &&
-				log_metadata_begin_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time);
+			return log_metadata_begin_op_to_display(os_ptr, metadata_ptr, elapsed_time) == 0 &&
+				log_metadata_begin_op_to_file(stream_ptr, os_ptr, metadata_ptr, elapsed_time) == 0;
 		
 
 		// Log to file.
@@ -451,12 +451,16 @@ int log_metadata_begin_op_to_file(FILE* file_ptr, os* os_ptr, prog_metadata* met
 
 						// Output.
 						case OUTPUT:
+							// Write.
 							fprintf(
 								file_ptr, "\n\n%f - %s %u\n\n",
 								elapsed_time,
 								OUTPUT_HDD_OP_BEGIN_MESSAGE,
 								os_ptr->config.total_hdds - get_available(&os_ptr->io_manager, HDD) + 1
 							);
+
+
+							// Done.
 							return 0;
 
 

@@ -8,8 +8,8 @@
 
 
 // Function prototypes.
-int add_metadata(pcb*, char*, FILE*);
-int add_metadata_descriptor(prog_metadata*, char*);
+inline int add_metadata(pcb*, char*, FILE*);
+inline int add_metadata_descriptor(prog_metadata*, char*);
 
 
 // Create.

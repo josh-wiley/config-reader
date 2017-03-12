@@ -8,8 +8,8 @@
 
 
 // Function prototypes.
-sem_t* get_sem(io_man*, device_code);
-pthread_mutex_t* get_mutex(io_man*, device_code);
+inline sem_t* get_sem(io_man*, device_code);
+inline pthread_mutex_t* get_mutex(io_man*, device_code);
 
 
 // Init.
