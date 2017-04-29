@@ -12,6 +12,7 @@ void init_config(os_config* this)
 {
 	// Initialize fields.
 	this->log_dest = TO_BOTH;
+	this->cpu_quantum = 0;
 
 
 	// Initialize times.
@@ -32,6 +33,30 @@ void init_config(os_config* this)
 	this->total_speakers = 
 	this->total_monitors = 
 	this->total_printers = 1;
+}
+
+
+// Set CPU scheduling.
+int set_cpu_scheduling(os_config* this, char* buffer_ptr)
+{
+	// Round robin?
+	if (strcmp(ROUND_ROBIN_SCHED_CODE, buffer_ptr) == 0)
+	{
+		// Set.
+		this->cpu_scheduling = RR;
+
+
+		// Done.
+		return 0;
+	}
+
+
+	// Alert.
+	printf("\n\nInvalid scheduling code.\n\n");
+
+
+	// Abort.
+	return 1;
 }
 
 

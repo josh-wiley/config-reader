@@ -12,6 +12,8 @@
 #define PROCESSOR_PERIOD_ATTRIBUTE "Processor cycle time (msec)"
 #define MEMORY_PERIOD_ATTRIBUTE "Memory cycle time (msec)"
 #define HDD_PERIOD_ATTRIBUTE "Hard drive cycle time (msec)"
+#define CPU_QUANTUM_ATTRIBUTE "Processor Quantum Number"
+#define CPU_SCHEDULING_CODE_ATTRIBUTE "CPU Scheduling Code:"
 #define HDD_QUANTITY_ATTRIBUTE "Hard drive quantity"
 #define KEYBOARD_PERIOD_ATTRIBUTE "Keyboard cycle time (msec)"
 #define KEYBOARD_QUANTITY_ATTRIBUTE "Keyboard quantity"

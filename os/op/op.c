@@ -3,13 +3,17 @@
 #define OS_OP_C_
 
 
+// Header.
+#include "op.h"
+
+
 // Functon prototypes.
 static inline int set_op_type(op* this, prog_metadata* metadata_ptr);
 static inline int set_op_device(op* this, prog_metadata* metadata_ptr);
 
 
 // Create operation.
-int create_op(op* this, prog_metadata* metadata_ptr)
+int create_op(op* this, const prog_metadata* metadata_ptr)
 {
     // Set type.
     if (set_op_type(this, metadata_ptr))

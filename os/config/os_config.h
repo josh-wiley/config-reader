@@ -5,10 +5,16 @@
 
 // Headers.
 #include <stdlib.h>
+#include <string>
 
 
 // Definitions.
 #define STRING_SIZE (size_t) 128
+#define ROUND_ROBIN_SCHED_CODE "RR"
+
+
+// Scheduler type.
+typedef enum { RR } sched_type;
 
 
 // Log destination.
@@ -23,6 +29,8 @@ typedef struct
 	char metadata_file_path[STRING_SIZE];
 	char log_file_path[STRING_SIZE];
 	destination log_dest;
+	unsigned int cpu_quantum;
+	sched_type cpu_scheduling;
 
 
 	// Times.
@@ -48,6 +56,7 @@ typedef struct
 
 // Function prototypes.
 void init_config(os_config*);
+int set_cpu_scheduling(os_config*, char*);
 
 
 // End header guard.

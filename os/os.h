@@ -30,7 +30,6 @@ typedef struct {
 	io_man io_manager;
 	pcb* pcb_tree[MAX_PCB_COUNT];
 	unsigned int pcb_count;
-	sched scheduler;
 } os;
 
 

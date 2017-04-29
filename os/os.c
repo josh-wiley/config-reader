@@ -66,6 +66,151 @@ int configure_os(os* this, char* file_path)
 }
 
 
+// Start the OS.
+int init_os(os* this)
+{
+	// OS flags.
+	int has_os_start_in_md = 0;
+	int has_os_end_in_md = 0;
+
+
+	// Set total PCBs.
+	this->pcb_count = 0;
+
+
+	// Get file stream.
+	FILE* stream_ptr = open_file(this->config.metadata_file_path, "r");
+
+
+	// Create file input buffer.
+	char* fin_buffer_ptr = malloc(STREAM_BUFFER_SIZE, sizeof(char));
+	memset(fin_buffer_ptr, '\0', STREAM_BUFFER_SIZE);
+
+
+	// Metadata buffer management.
+	unsigned int current_md_index = 0;
+	unsigned int md_buffer_size = MAX_METADATA_PER_PROCESS;
+
+
+	// Create metadata buffer.
+	prog_metadata* md_buffer_ptr = malloc(md_buffer_size, sizeof(prog_metadata));
+
+
+	// Consume initial, utterly useless, line.
+	read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, '\n');
+
+
+	// Read from stream.
+	while (read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR) == 0)
+	{
+		// If room, ingest metadata.
+		if (current_md_index == md_buffer_size || ingest_metadata(this, fin_buffer_ptr, &md_buffer_ptr[current_md_index], stream_ptr))
+		{
+			// Abort.
+			close_file(stream_ptr);
+			free(fin_buffer_ptr);
+			free(md_buffer_ptr);
+			return 1;
+		};
+
+
+		// Get the ingested metadata.
+		prog_metadata ingested_md = md_buffer_ptr[current_md_index];
+
+
+		// Is the ingested metadata signaling the end of a process?
+		if (ingested_md.code == APPLICATION && ingested_md.descriptor == END)
+		{
+			// Create and add the PCB.
+			create_pcb(&this->pcb_tree[md_buffer_ptr, current_md_index + 1]);
+			this->pcb_count++;
+
+
+			// Reset metadata buffer.
+			current_md_index = 0;
+		}
+
+
+		// OS metadata ingested?
+		else if (ingested_md.code == OS)
+		{
+			// Start?
+			if (ingested_md.descriptor == START)
+			{
+				// Flag.
+				has_os_start_in_md = 1;
+			}
+
+
+			// End?
+			else if (ingested_md.descriptor == END)
+			{
+				// Flag.
+				has_os_end_in_md = 1;
+
+
+				// Done.
+				break;
+			}
+		}
+
+
+		// If not OS or APPLICATION END, save (increment index);
+		else
+		{
+			// Increment current index.
+			current_md_index++;
+		}
+	}
+
+
+	// Clean up.
+	close_file(stream_ptr);
+	free(fin_buffer_ptr);
+	free(md_buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nCreated process tree.\n\n");
+
+
+	// Has appropriate OS flags?
+	if (!(has_os_start_in_md && has_os_end_in_md))
+	{
+		// Alert.
+		printf("\n\nMetadata file does not start and stop the OS.\n\n")
+
+
+		// Abort.
+		return 1;
+	}
+
+
+	// Start the scheduler.
+	if (start_sched(this->pcb_tree, &this->config))
+	{
+		// Alert.
+		printf("\n\nOS failed to start scheduler.\n\n");
+
+
+		// Abort.
+		return 1;
+	}
+
+
+	// Done.
+	return 0;
+}
+
+
+// Destroy OS.
+void destroy_os(os* this)
+{
+	// Destory I/O manager.
+	destroy_io_man(&this->io_manager);
+}
+
+
 // Config attribute mapper.
 int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 {
@@ -441,6 +586,38 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 	}
 
 
+	// CPU quantum number attribute?
+	else if (strcmp(buffer_ptr, CPU_QUANTUM_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		this->config.cpu_quantum = atoi(buffer_ptr);
+
+
+		// Success.
+		return 0;
+	}
+
+
+	// CPU scheduling code attribute?
+	else if (strcmp(buffer_ptr, CPU_SCHEDULING_CODE_ATTRIBUTE) == 0)
+	{
+		// Get value.
+		read_until(stream_ptr, buffer_ptr, FILE_IO_BUFFER_SIZE, CONFIG_VALUE_DELIMITER);
+
+
+		// Save.
+		set_cpu_scheduling(&this->config.cpu_scheduling, buffer_ptr);
+
+
+		// Success.
+		return 0;
+	}
+
+
 	// File end?
 	else if (strcmp(buffer_ptr, CONFIG_TERMINATOR_ATTRIBUTE) == 0)
 	{
@@ -452,151 +629,6 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 	// No mapping.
 	printf("\n\nNo OS attribute for: %s\n\n", buffer_ptr);
 	return 1;
-}
-
-
-// Start the OS.
-int init_os(os* this)
-{
-	// OS flags.
-	int has_os_start_in_md = 0;
-	int has_os_end_in_md = 0;
-
-
-	// Set total PCBs.
-	this->pcb_count = 0;
-
-
-	// Get file stream.
-	FILE* stream_ptr = open_file(this->config.metadata_file_path, "r");
-
-
-	// Create file input buffer.
-	char* fin_buffer_ptr = malloc(STREAM_BUFFER_SIZE, sizeof(char));
-	memset(fin_buffer_ptr, '\0', STREAM_BUFFER_SIZE);
-
-
-	// Metadata buffer management.
-	unsigned int current_md_index = 0;
-	unsigned int md_buffer_size = MAX_METADATA_PER_PROCESS;
-
-
-	// Create metadata buffer.
-	prog_metadata* md_buffer_ptr = malloc(md_buffer_size, sizeof(prog_metadata));
-
-
-	// Consume initial, utterly useless, line.
-	read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, '\n');
-
-
-	// Read from stream.
-	while (read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR) == 0)
-	{
-		// If room, ingest metadata.
-		if (current_md_index == md_buffer_size || ingest_metadata(this, fin_buffer_ptr, &md_buffer_ptr[current_md_index], stream_ptr))
-		{
-			// Abort.
-			close_file(stream_ptr);
-			free(fin_buffer_ptr);
-			free(md_buffer_ptr);
-			return 1;
-		};
-
-
-		// Get the ingested metadata.
-		prog_metadata ingested_md = md_buffer_ptr[current_md_index];
-
-
-		// Is the ingested metadata signaling the end of a process?
-		if (ingested_md.code == APPLICATION && ingested_md.descriptor == END)
-		{
-			// Create and add the PCB.
-			create_pcb(&this->pcb_tree[md_buffer_ptr, current_md_index + 1]);
-			this->pcb_count++;
-
-
-			// Reset metadata buffer.
-			current_md_index = 0;
-		}
-
-
-		// OS metadata ingested?
-		else if (ingested_md.code == OS)
-		{
-			// Start?
-			if (ingested_md.descriptor == START)
-			{
-				// Flag.
-				has_os_start_in_md = 1;
-			}
-
-
-			// End?
-			else if (ingested_md.descriptor == END)
-			{
-				// Flag.
-				has_os_end_in_md = 1;
-
-
-				// Done.
-				break;
-			}
-		}
-
-
-		// If not OS or APPLICATION END, save (increment index);
-		else
-		{
-			// Increment current index.
-			current_md_index++;
-		}
-	}
-
-
-	// Clean up.
-	close_file(stream_ptr);
-	free(fin_buffer_ptr);
-	free(md_buffer_ptr);
-
-
-	// Checkpoint.
-	printf("\n\nCreated process tree.\n\n");
-
-
-	// Has appropriate OS flags?
-	if (!(has_os_start_in_md && has_os_end_in_md))
-	{
-		// Alert.
-		printf("\n\nMetadata file does not start and stop the OS.\n\n")
-
-
-		// Abort.
-		return 1;
-	}
-
-
-	// Start the scheduler.
-	if (start_sched(&this->scheduler, this->pcb_tree))
-	{
-		// Alert.
-		printf("\n\nOS failed to start scheduler.\n\n");
-
-
-		// Abort.
-		return 1;
-	}
-
-
-	// Done.
-	return 0;
-}
-
-
-// Destroy OS.
-void destroy_os(os* this)
-{
-	// Destory I/O manager.
-	destroy_io_man(&this->io_manager);
 }
 
 

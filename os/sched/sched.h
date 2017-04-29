@@ -3,11 +3,14 @@
 #define OS_SCHED_H_
 
 
-// Scheduler.
-typedef struct
-{
-    pcb* os_pcb_tree;
-} sched;
+// Headers.
+#include "../pcb/pcb.h"
+#include "../os_config/os_config.h"
 
 
+// Function prototypes.
+int start_sched(pcb*, const os_config*);
+
+
+// End header guard.
 #endif

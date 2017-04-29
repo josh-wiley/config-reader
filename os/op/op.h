@@ -25,7 +25,7 @@ typedef struct
 
 
 // Function declarations.
-int create_op(op* this, prog_metadata* metadata_ptr);
+int create_op(op* this, const prog_metadata* metadata_ptr);
 
 
 // End header guard.
