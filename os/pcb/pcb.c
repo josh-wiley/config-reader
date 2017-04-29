@@ -7,12 +7,8 @@
 #include "pcb.h"
 
 
-// Function declarations.
-static inline int create_op(prog_metadata*, op*);
-
-
 // Create.
-int create_pcb(pcb* this, proj_metadata* metadata_buffer, unsigned int num_operations)
+int create_pcb(pcb* this, prog_metadata* metadata_buffer, unsigned int num_operations)
 {
 	// Save the number of operations.
 	this->num_operations = num_operations;
@@ -26,7 +22,7 @@ int create_pcb(pcb* this, proj_metadata* metadata_buffer, unsigned int num_opera
 	for (unsigned int i = 0; i < num_operations; i++)
 	{
 		// Create operation.
-		create_op(&metadata_buffer[i], &this->operations[i]);
+		create_op(&this->operations[i], &metadata_buffer[i]);
 	}
 
 
@@ -76,14 +72,6 @@ void set_state(pcb* this, pcb_state state)
 {
 	// Set.
 	this->state = state;
-}
-
-
-// Create operation.
-static inline int create_op(prog_metadata*, op*)
-{
-	// Done.
-	return 0;
 }
 
 
