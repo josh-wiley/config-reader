@@ -3,18 +3,18 @@ CC = gcc
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG) -std=c11
 LFLAGS = -Wall $(DEBUG)
-OFLAGS = -o Sim03
+OFLAGS = -o Sim06
 TFLAGS = -pthread
 
 
 # Executable.
-Sim03: Sim03.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_man.o io_man.o
-	$(CC) $(LFLAGS) Sim03.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_man.o io_man.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim06: Sim06.o os.o os_config.o file_io.o logger.o prog_exec.o prog_metadata.o pcb.o mem_man.o io_man.o
+	$(CC) $(LFLAGS) Sim06.o os.o os_config.o file_io.o logger.o prog_metadata.o prog_exec.o pcb.o mem_man.o io_man.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
-Sim03.o:
-	$(CC) $(CFLAGS) Sim03.c
+Sim06.o:
+	$(CC) $(CFLAGS) Sim06.c
 
 
 # OS.
@@ -64,4 +64,4 @@ io_man.o:
 
 # Clean.
 clean:
-	rm -rf *.o Sim03
+	rm -rf *.o Sim06

@@ -7,7 +7,7 @@
 #include "prog_exec.h"
 
 
-// Function prototypes.
+// Function declarations.
 inline unsigned int get_op_time(os_config*, prog_metadata*);
 inline void* ms_sleep(void*);
 
@@ -21,7 +21,7 @@ int exec(os* os_ptr)
 	prog_metadata* metadata_ptr = pcb_ptr->metadata;
 
 
-	// Buffer.
+	// Create buffer.
 	char* buffer_ptr = malloc(FILE_PATH_BUFFER_SIZE);
 	memset(buffer_ptr, '\0', FILE_PATH_BUFFER_SIZE);
 
@@ -35,7 +35,7 @@ int exec(os* os_ptr)
 	create_pcb(pcb_ptr, buffer_ptr);
 
 
-	// Free buffer.
+	// Destroy buffer.
 	free(buffer_ptr);
 
 

@@ -7,9 +7,11 @@
 #include "os.h"
 
 
-// Function prototypes.
-inline int map_config(os*, char*, FILE*);
-inline int get_memory_unit_multiplier(char*, unsigned int*);
+// Function declarations.
+static inline int map_config(os*, char*, FILE*);
+static inline int get_memory_unit_multiplier(char*, unsigned int*);
+static inline int add_metadata(pcb*, char*, FILE*);
+static inline int add_metadata_descriptor(prog_metadata*, char*);
 
 
 // Configure OS.
@@ -19,11 +21,11 @@ int configure_os(os* this, char* file_path)
 	FILE* stream_ptr = open_file(file_path, "r");
 
 
-	// Initialize config.
+	// Initialize the config structure.
 	init_config(&this->config);
 
 
-	// Buffer.
+	// Create buffer.
 	char* buffer_ptr = malloc(FILE_IO_BUFFER_SIZE);
 	memset(buffer_ptr, '\0', FILE_IO_BUFFER_SIZE);
 
@@ -453,6 +455,151 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 }
 
 
+// Start the OS.
+int init_os(os* this)
+{
+	// OS flags.
+	int has_os_start_in_md = 0;
+	int has_os_end_in_md = 0;
+
+
+	// Set total PCBs.
+	this->pcb_count = 0;
+
+
+	// Get file stream.
+	FILE* stream_ptr = open_file(this->config.metadata_file_path, "r");
+
+
+	// Create file input buffer.
+	char* fin_buffer_ptr = malloc(STREAM_BUFFER_SIZE, sizeof(char));
+	memset(fin_buffer_ptr, '\0', STREAM_BUFFER_SIZE);
+
+
+	// Metadata buffer management.
+	unsigned int current_md_index = 0;
+	unsigned int md_buffer_size = MAX_METADATA_PER_PROCESS;
+
+
+	// Create metadata buffer.
+	prog_metadata* md_buffer_ptr = malloc(md_buffer_size, sizeof(prog_metadata));
+
+
+	// Consume initial, utterly useless, line.
+	read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, '\n');
+
+
+	// Read from stream.
+	while (read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR) == 0)
+	{
+		// If room, ingest metadata.
+		if (current_md_index == md_buffer_size || ingest_metadata(this, fin_buffer_ptr, &md_buffer_ptr[current_md_index], stream_ptr))
+		{
+			// Abort.
+			close_file(stream_ptr);
+			free(fin_buffer_ptr);
+			free(md_buffer_ptr);
+			return 1;
+		};
+
+
+		// Get the ingested metadata.
+		prog_metadata ingested_md = md_buffer_ptr[current_md_index];
+
+
+		// Is the ingested metadata signaling the end of a process?
+		if (ingested_md.code == APPLICATION && ingested_md.descriptor == END)
+		{
+			// Create and add the PCB.
+			create_pcb(&this->pcb_tree[md_buffer_ptr, current_md_index + 1]);
+			this->pcb_count++;
+
+
+			// Reset metadata buffer.
+			current_md_index = 0;
+		}
+
+
+		// OS metadata ingested?
+		else if (ingested_md.code == OS)
+		{
+			// Start?
+			if (ingested_md.descriptor == START)
+			{
+				// Flag.
+				has_os_start_in_md = 1;
+			}
+
+
+			// End?
+			else if (ingested_md.descriptor == END)
+			{
+				// Flag.
+				has_os_end_in_md = 1;
+
+
+				// Done.
+				break;
+			}
+		}
+
+
+		// If not OS or APPLICATION END, save (increment index);
+		else
+		{
+			// Increment current index.
+			current_md_index++;
+		}
+	}
+
+
+	// Clean up.
+	close_file(stream_ptr);
+	free(fin_buffer_ptr);
+	free(md_buffer_ptr);
+
+
+	// Checkpoint.
+	printf("\n\nCreated process tree.\n\n");
+
+
+	// Has appropriate OS flags?
+	if (!(has_os_start_in_md && has_os_end_in_md))
+	{
+		// Alert.
+		printf("\n\nMetadata file does not start and stop the OS.\n\n")
+
+
+		// Abort.
+		return 1;
+	}
+
+
+	// Start the scheduler.
+	if (start_sched(&this->scheduler, this->pcb_tree))
+	{
+		// Alert.
+		printf("\n\nOS failed to start scheduler.\n\n");
+
+
+		// Abort.
+		return 1;
+	}
+
+
+	// Done.
+	return 0;
+}
+
+
+// Destroy OS.
+void destroy_os(os* this)
+{
+	// Destory I/O manager.
+	destroy_io_man(&this->io_manager);
+}
+
+
 // Get memory unit multiplier.
 int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 {
@@ -559,11 +706,425 @@ int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 }
 
 
-// Destroy OS.
-void destroy_os(os* this)
+// Add metadata.
+int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr, FILE* stream_ptr)
 {
-	// Destory I/O manager.
-	destroy_io_man(&this->io_manager);
+	// Match first character to metadata code.
+	switch (fin_buffer_ptr[0])
+	{
+		// OS?
+		case OS_CODE:
+			// Add code.
+			*metadata_ptr.code = OS;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, OS_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles (always 0 for OS start and end).
+			md_buffer_ptr.cycles = 0;
+
+
+			// Increment number of metadata.
+			*current_md_index++;
+
+
+			// Done.
+			return 0;
+		
+
+		// Application?
+		case APPLICATION_CODE:
+			// Add code.
+			*metadata_ptr.code = APPLICATION;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, APPLICATION_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+
+
+			// Done.
+			return 0;
+		
+
+		// Process?
+		case PROCESS_CODE:
+			// Add code.
+			*metadata_ptr.code = PROCESS;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, PROCESS_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+
+
+			// Done.
+			return 0;
+
+
+		// Input?
+		case INPUT_CODE:
+			// Add code.
+			*metadata_ptr.code = INPUT;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, INPUT_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+
+
+			// Done.
+			return 0;
+
+
+		// Output?
+		case OUTPUT_CODE:
+			// Add code.
+			*metadata_ptr.code = OUTPUT;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, OUTPUT_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+
+
+			// Done.
+			return 0;
+		
+
+		// Memory?
+		case MEMORY_CODE:
+			// Add code.
+			*metadata_ptr.code = MEMORY;
+
+
+			// Get descriptor.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_DESCRIPTOR_TERMINATOR);
+
+
+			// Add the descriptor.
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
+			{
+				// Alert.
+				printf("\n\n\
+					ERROR READING DESCRIPTOR %i:\n\
+					Invalid descriptor \"%s\" for code \"%c\".\
+					\n\n",
+					i + 1, fin_buffer_ptr, MEMORY_CODE
+				);
+
+
+				// Abort.
+				return 1;
+			}
+
+
+			// Get cycles.
+			read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CYCLES_TERMINATOR);
+
+
+			// Add cycles.
+			*metadata_ptr.cycles = atoi(buffer_ptr);
+
+
+			// Done.
+			return 0;
+
+
+		// No match?
+		default:
+			// Alert.
+			printf("\n\n\
+				ERROR READING CODE %i:\n\
+				Invalid code \"%c\".\
+				\n\n",
+				i + 1, fin_buffer_ptr[0]
+			);
+
+
+			// Abort.
+			return 1;
+	}
+}
+
+
+// Is valid descriptor for code?
+int add_metadata_descriptor(prog_metadata* metadata, char* buffer_ptr)
+{
+	// Valid descriptor based on code?
+	switch (metadata->code)
+	{
+		// OS or application?
+		case OS:
+		case APPLICATION:
+			// Start?
+			if (strcmp(buffer_ptr, START_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = START;
+				return 0;
+			}
+
+
+			// End?
+			if (strcmp(buffer_ptr, END_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = END;
+				return 0;
+			}
+
+
+			// Descriptor DNE.
+			return 1;
+
+
+		// Process?
+		case PROCESS:
+			// Run?
+			if (strcmp(buffer_ptr, RUN_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = RUN;
+				return 0;
+			}
+
+
+			// Descriptor DNE.
+			return 1;
+
+
+		// Input?
+		case INPUT:
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return 0;
+			}
+
+
+			// Keyboard?
+			if (strcmp(buffer_ptr, KEYBOARD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = KEYBOARD;
+				return 0;
+			}
+
+
+			// Mouse?
+			if (strcmp(buffer_ptr, MOUSE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MOUSE;
+				return 0;
+			}
+			
+			
+			// Printer?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return 0;
+			}
+
+
+			// Descriptor DNE.
+			return 1;
+
+
+		// Output? 
+		case OUTPUT:
+			// HDD?
+			if (strcmp(buffer_ptr, HDD_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = HDD;
+				return 0;
+			}
+
+
+			// Monitor?
+			if (strcmp(buffer_ptr, MONITOR_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = MONITOR;
+				return 0;
+			}
+			
+			
+			// Speaker?
+			if (strcmp(buffer_ptr, SPEAKER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = SPEAKER;
+				return 0;
+			}
+
+
+			// Speaker?
+			if (strcmp(buffer_ptr, PRINTER_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = PRINTER;
+				return 0;
+			}
+
+
+			// Descriptor DNE.
+			return 1;
+
+
+		// Memory?
+		case MEMORY:
+			// Block?
+			if (strcmp(buffer_ptr, BLOCK_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = BLOCK;
+				return 0;
+			}
+
+
+			// Allocate?
+			if (strcmp(buffer_ptr, ALLOCATE_DESCRIPTOR) == 0)
+			{
+				// Add.
+				metadata->descriptor = ALLOCATE;
+				return 0;
+			}
+
+
+			// Descriptor DNE.
+			return 1;
+		
+
+		// Default.
+		default:
+			return 1;
+	}
 }
 
 

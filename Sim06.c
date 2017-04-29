@@ -1,6 +1,6 @@
 // Header guard.
-#ifndef SIM_03_C_
-#define SIM_03_C_
+#ifndef SIM_06_C_
+#define SIM_06_C_
 
 
 // Headers.
@@ -33,11 +33,11 @@ int main(int num_args, char** args)
     }
 
     
-    // Execute program.
-    if (exec(&os))
+    // Start OS.
+    if (init_os(&os))
     {
         // Alert.
-        printf("\n\nProgram execution failed.\n\n");
+        printf("\n\nOS failure.\n\n");
 
 
         // Abort.
@@ -45,7 +45,7 @@ int main(int num_args, char** args)
     }
 
 
-    // Destroy OS.
+    // Destroy the OS.
     destroy_os(&os);
     
 

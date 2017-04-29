@@ -4,16 +4,12 @@
 
 
 // Headers.
-#include <string.h>
-#include "../../utils/file_io/file_io.h"
-#include "../config/os_config.h"
+#include "../op/op.h"
 #include "../prog_metadata/prog_metadata.h"
-#include "metadata_tokens.h"
 
 
 // Definitions.
 #define STREAM_BUFFER_SIZE 256
-#define TOTAL_METADATA 512
 
 
 // PCB state.
@@ -24,12 +20,13 @@ typedef enum { CREATED, READY, RUNNING, WAITING, TERMINATED } pcb_state;
 typedef struct
 {
 	pcb_state state;
-	prog_metadata metadata[TOTAL_METADATA];
-	unsigned int num_metadata;
+	op* operations;
+	unsigned int num_operations;
+	unsigned int current_op_index;
 } pcb;
 
 
-// Function prototypes.
+// Function declarations.
 int create_pcb(pcb*, char*);
 int terminate_pcb(pcb*);
 pcb_state get_state(pcb*);
