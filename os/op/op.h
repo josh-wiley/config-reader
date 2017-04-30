@@ -19,7 +19,7 @@ typedef enum { OP_HDD, OP_PRINTER, OP_KEYBOARD, OP_MOUSE, OP_MONITOR, OP_SPEAKER
 typedef struct
 {
     op_type type;
-    unsigned int cycles;
+    unsigned int cycles_left;
     io_device device;
 } op;
 

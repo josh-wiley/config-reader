@@ -6,6 +6,7 @@
 // Headers.
 #include "../op/op.h"
 #include "../prog_metadata/prog_metadata.h"
+#include "../op/op.h"
 
 
 // Definitions.
@@ -27,7 +28,7 @@ typedef struct
 
 
 // Function declarations.
-int create_pcb(pcb*, char*);
+int create_pcb(pcb*, prog_metadata*, unsigned int);
 int terminate_pcb(pcb*);
 pcb_state get_state(pcb*);
 void set_state(pcb*, pcb_state);

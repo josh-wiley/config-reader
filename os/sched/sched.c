@@ -3,15 +3,20 @@
 #define OS_SCHED_C_
 
 
+// Header.
+#include "sched.h"
+
+
 // Function declarations.
-static inline int round_robin_sched(pcb*, unsigned int);
-static inline int exec(os* os_ptr);
-static inline unsigned int get_op_time(os_config*, prog_metadata*);
+static inline int round_robin_sched(pcb*, const unsigned int, const os_config*);
+static inline int exec_with_quantum(pcb*, const os_config*);
+static inline unsigned int get_op_time(os_config*, op*);
 static inline void* ms_sleep(void*);
+static inline void set_remaining_cycles(op*, unsigned int);
 
 
 // Start scheduler.
-int start_sched(pcb* pcb_tree_ptr, os_config* config_ptr)
+int start_sched(pcb* pcb_tree_ptr, const unsigned int pcb_count, const os_config* config_ptr)
 {
     // Not RR? (Only scheduling algorithm implemented.)
     if (config_ptr->cpu_scheduling != RR)
@@ -38,7 +43,7 @@ int start_sched(pcb* pcb_tree_ptr, os_config* config_ptr)
 
 
     // Round-robing.
-    round_robin_sched(pcb_tree_ptr, config_ptr->cpu_quantum);
+    round_robin_sched(pcb_tree_ptr, pcb_count, config_ptr);
 
 
     // Done.
@@ -47,9 +52,57 @@ int start_sched(pcb* pcb_tree_ptr, os_config* config_ptr)
 
 
 // Round-robin scheduling.
-int round_robin_sched(pcb*, unsigned int)
+int round_robin_sched(pcb* pcb_tree_ptr, const unsigned int total_pcb_count, const os_config* config_ptr)
 {
-    // TODO: Implement.
+    // Current PCB index.
+	unsigned int current_pcb_index = 0;
+
+
+	// Total terminated PCBs encountered consecutively.
+	unsigned int total_terminated_pcb_count = 0;
+
+
+	// Circle the PCB tree.
+	while (1)
+	{
+		// PCB at current index not ready for execution?
+		while (!(
+			pcb_tree_ptr[current_pcb_index % total_pcb_count].state == READY ||
+			pcb_tree_ptr[current_pcb_index % total_pcb_count].state == CREATED
+		))
+		{
+			// Terminated?
+			if (pcb_tree_ptr[current_pcb_index % total_pcb_count].state == TERMINATED)
+			{
+				// Increment total terminated.
+				total_terminated_pcb_count++;
+
+
+				// All PCBs terminated?
+				if (total_terminated_pcb_count == total_pcb_count)
+				{
+					// Done.
+					return 0;
+				}
+			}
+
+
+			// Next PCB.
+			current_pcb_index++;
+		}
+
+
+		// Reset total terminated count.
+		total_terminated_pcb_count = 0;
+
+
+		// Execute.
+		exec_with_quantum(&pcb_tree_ptr[current_pcb_index], config_ptr);
+
+
+		// Increment index.
+		current_pcb_index++;
+	}
 
     
     // Done.
@@ -58,59 +111,42 @@ int round_robin_sched(pcb*, unsigned int)
 
 
 // Execute program.
-int exec(os* os_ptr)
+int exec_with_quantum(pcb* pcb_ptr, const os_config* config_ptr)
 {
-	// PCB pointer, log path, and metadata pointer.
-	pcb* pcb_ptr = &os_ptr->pcb;
-	os_config* config_ptr = &os_ptr->config;
-	prog_metadata* metadata_ptr = pcb_ptr->metadata;
-
-
-	// Create buffer.
-	char* buffer_ptr = malloc(FILE_PATH_BUFFER_SIZE);
-	memset(buffer_ptr, '\0', FILE_PATH_BUFFER_SIZE);
-
-
-	// Get relative metadata file path.
-	strcat(buffer_ptr, METADATA_FOLDER_PATH);
-	strcat(buffer_ptr, config_ptr->metadata_file_path);
-
-
-	// Create.
-	create_pcb(pcb_ptr, buffer_ptr);
-
-
-	// Destroy buffer.
-	free(buffer_ptr);
-
-
 	// Time to wait (microseconds) and start clock.
-	unsigned int wait_time_ms = 0;
-	clock_t start_clock = clock();
+	unsigned int op_time_ms = 0;
+	unsigned int remaining_time_ms = config_ptr->cpu_quantum * 1000;
+	//clock_t start_clock = clock();
 
 
 	// Thread ID and status.
 	pthread_t thread_id = 0;
-	void* thread_status_ptr;
+	//void* thread_status_ptr;
 
 
-	// Simulate on metadata.
-	for (unsigned int i = 0; i < pcb_ptr->num_metadata; i++)
+	// Execute operations.
+	for (unsigned int i = pcb_ptr->current_op_index; i < pcb_ptr->num_operations; i++)
 	{
 		// Set PCB state.
 		set_state(pcb_ptr, READY);
 
 
+		/*
 		// Log begin operation.
 		log_metadata_begin_op(
 			os_ptr,
 			&metadata_ptr[i],
 			(double) (clock() - start_clock) * 1000 / CLOCKS_PER_SEC // Elapsed time.
 		);
+		*/
 
 
-		// Calculate total time.
-		wait_time_ms = get_op_time(&os_ptr->config, &metadata_ptr[i]);
+		// Get current operation.
+		op current_operation = pcb_ptr->operations[pcb_ptr->current_op_index];
+
+
+		// Calculate operation time and maximum time.
+		op_time_ms = get_op_time(config_ptr, &current_operation);
 
 
 		// Set PCB state.
@@ -118,39 +154,73 @@ int exec(os* os_ptr)
 
 
 		// I/O?
-		if (metadata_ptr->code == INPUT || metadata_ptr->code == OUTPUT)
+		if (current_operation.type == OP_INPUT || current_operation.type == OP_OUTPUT)
 		{
 			// Acquire device from appropriate pool.
-			acquire(&os_ptr->io_manager, metadata_ptr->descriptor);
+			//acquire(&os_ptr->io_manager, metadata_ptr->descriptor);
 
 			
 			// Set PCB state.
 			set_state(pcb_ptr, WAITING);
 
 
-			// Thread / sync.
-			pthread_create(&thread_id, NULL, ms_sleep, (void*) &wait_time_ms);
-			pthread_join(thread_id, &thread_status_ptr);
+			// Thread.
+			pthread_create(&thread_id, NULL, ms_sleep, (void*) &op_time_ms);
+			//pthread_join(thread_id, &thread_status_ptr);
+
+
+			// Release control.
+			return 0;
 
 
 			// Release.
-			release(&os_ptr->io_manager, metadata_ptr->descriptor);
+			//release(&os_ptr->io_manager, metadata_ptr->descriptor);
+		}
+
+
+		// Sleep time (ms).
+		unsigned int sleep_time_ms = op_time_ms;
+
+
+		// Operation time greater than time remaining?
+		if (op_time_ms > remaining_time_ms)
+		{
+			// Use the remaining time for operation time.
+			sleep_time_ms = remaining_time_ms;
+
+
+			// Save remaining cycles back to operation.
+			set_remaining_cycles(&pcb_ptr->operations[pcb_ptr->current_op_index], op_time_ms - remaining_time_ms);
 		}
 
 
 		// CPU?
-		else if (wait_time_ms > 0) {
+		else if (sleep_time_ms > 0) {
 			// Sleep.
-			ms_sleep((void*) &wait_time_ms);
+			ms_sleep((void*) &sleep_time_ms);
 		}
 
 
+		// Update remaining time.
+		remaining_time_ms = sleep_time_ms;
+
+
+		// No more remaining time?
+		if (remaining_time_ms == 0)
+		{
+			// Release control.
+			return 0;
+		}
+
+
+		/*
 		// Log end operation.
 		log_metadata_end_op(
 			os_ptr,
 			&metadata_ptr[i],
 			(double) (clock() - start_clock) * 1000 / CLOCKS_PER_SEC // Elapsed time.
 		);
+		*/
 	}
 
 
@@ -164,59 +234,58 @@ int exec(os* os_ptr)
 
 
 // Get time (ms) to complete operation.
-unsigned int get_op_time(os_config* config_ptr, prog_metadata* metadata_ptr)
+unsigned int get_op_time(os_config* config_ptr, op* op_ptr)
 {
 	// Save number of cycles.
-	unsigned int num_cycles = metadata_ptr->cycles;
+	unsigned int num_cycles = op_ptr->cycles_left;
 
 
 	// Switch on code.
-	switch (metadata_ptr->code)
+	switch (op_ptr->type)
 	{
-		// Application or process?
-		case APPLICATION:
-		case PROCESS:
+		// CPU?
+		case OP_CPU:
 			return config_ptr->processor_period_ms * num_cycles;
 
 
 		// Memory?
-		case MEMORY:
+		case OP_MEMORY:
 			return config_ptr->memory_period_ms * num_cycles;
 		
 
 		// I/O?
-		case INPUT:
-		case OUTPUT:
+		case OP_INPUT:
+		case OP_OUTPUT:
 			// Depends on device.
-			switch (metadata_ptr->descriptor)
+			switch (op_ptr->device)
 			{
 				// HDD?
-				case HDD:
+				case OP_HDD:
 					return config_ptr->hdd_period_ms * num_cycles;
 
 
 				// Keyboard?
-				case KEYBOARD:
+				case OP_KEYBOARD:
 					return config_ptr->keyboard_period_ms * num_cycles;
 
 
 				// Mouse?
-				case MOUSE:
+				case OP_MOUSE:
 					return config_ptr->mouse_period_ms * num_cycles;
 
 
 				// Monitor?
-				case MONITOR:
+				case OP_MONITOR:
 					return config_ptr->monitor_period_ms * num_cycles;
 
 
 				// Speaker?
-				case SPEAKER:
+				case OP_SPEAKER:
 					return config_ptr->speaker_period_ms * num_cycles;
 
 
 				// Printer?
-				case PRINTER:
+				case OP_PRINTER:
 					return config_ptr->printer_period_ms * num_cycles;
 
 
@@ -246,6 +315,13 @@ void* ms_sleep(void* arg_ptr)
 
 	// Done.
 	return NULL;
+}
+
+
+// Set remaining cycles for operation given remaining time.
+void set_remaining_cycles(op* op_ptr, unsigned int remaining_time_ms)
+{
+	// TODO: Implement.
 }
 
 

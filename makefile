@@ -8,8 +8,8 @@ TFLAGS = -pthread
 
 
 # Executable.
-Sim06: Sim06.o os.o os_config.o file_io.o logger.o sched.o prog_metadata.o pcb.o mem_man.o io_man.o
-	$(CC) $(LFLAGS) Sim06.o os.o os_config.o file_io.o logger.o prog_metadata.o sched.o pcb.o mem_man.o io_man.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
+Sim06: Sim06.o os.o os_config.o file_io.o sched.o prog_metadata.o op.o pcb.o mem_man.o io_man.o
+	$(CC) $(LFLAGS) Sim06.o os.o os_config.o file_io.o sched.o prog_metadata.o op.o pcb.o mem_man.o io_man.o $(OFLAGS) $(TFLAGS) && rm -rf *.o
 
 
 # Main.
@@ -33,8 +33,8 @@ file_io.o:
 
 
 # Logger.
-logger.o:
-	$(CC) $(CFLAGS) utils/logger/logger.c
+#logger.o:
+#	$(CC) $(CFLAGS) utils/logger/logger.c
 
 
 # OS metadata.
@@ -45,6 +45,11 @@ prog_metadata.o:
 # Process control block.
 pcb.o:
 	$(CC) $(CFLAGS) os/pcb/pcb.c
+
+
+# PCB operations.
+op.o:
+	$(CC) $(CFLAGS) os/op/op.c
 
 
 # Scheduler.

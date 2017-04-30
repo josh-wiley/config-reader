@@ -5,14 +5,13 @@
 
 // Headers.
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "../utils/file_io/file_io.h"
 #include "config/os_config.h"
 #include "mem_man/mem_man.h"
 #include "io_man/io_man.h"
-#include "sched/sched.h"
 #include "pcb/pcb.h"
-#include "op/op.h"
 #include "config_tokens.h"
 #include "metadata_tokens.h"
 
@@ -28,7 +27,7 @@ typedef struct {
 	os_config config;
 	mem_man memory_manager;
 	io_man io_manager;
-	pcb* pcb_tree[MAX_PCB_COUNT];
+	pcb pcb_tree[MAX_PCB_COUNT];
 	unsigned int pcb_count;
 } os;
 
@@ -37,6 +36,10 @@ typedef struct {
 int configure_os(os*, char*);
 int init_os(os*);
 void destroy_os(os*);
+
+
+// Headers.
+#include "sched/sched.h" // Dependent on OS struct.
 
 
 // End header guard.

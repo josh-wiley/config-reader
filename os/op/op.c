@@ -19,7 +19,7 @@ int create_op(op* this, const prog_metadata* metadata_ptr)
     if (set_op_type(this, metadata_ptr))
     {
         // Alert.
-        printf("\n\nFailed to set the operation type.\n\n")
+        printf("\n\nFailed to set the operation type.\n\n");
 
 
         // Abort.
@@ -28,7 +28,7 @@ int create_op(op* this, const prog_metadata* metadata_ptr)
 
 
     // Import cycles directly.
-    this->cycles = metadata_ptr->cycles;
+    this->cycles_left = metadata_ptr->cycles;
 
 
     // I/O operation?
@@ -38,7 +38,7 @@ int create_op(op* this, const prog_metadata* metadata_ptr)
         if (set_op_device(this, metadata_ptr))
         {
             // Alert.
-            printf("\n\nFailed to set the operation device.\n\n")
+            printf("\n\nFailed to set the operation device.\n\n");
 
 
             // Abort.

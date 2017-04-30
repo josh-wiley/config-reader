@@ -14,11 +14,11 @@
 #include <time.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "../os.h"
-#include "../pcb/pcb.h"
-#include "../config/os_config.h"
 #include "../../utils/file_io/file_io.h"
 #include "../../utils/logger/logger.h"
+#include "../pcb/pcb.h"
+#include "../config/os_config.h"
+#include "../os.h"
 
 
 // Definitions.
@@ -26,7 +26,7 @@
 
 
 // Function prototypes.
-int start_sched(pcb*, const os_config*);
+int start_sched(pcb*, const unsigned int, const os_config*);
 
 
 // End header guard.

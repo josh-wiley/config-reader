@@ -10,7 +10,7 @@
 // Function declarations.
 static inline int map_config(os*, char*, FILE*);
 static inline int get_memory_unit_multiplier(char*, unsigned int*);
-static inline int add_metadata(pcb*, char*, FILE*);
+static inline int ingest_metadata(char*, prog_metadata*, FILE*);
 static inline int add_metadata_descriptor(prog_metadata*, char*);
 
 
@@ -26,8 +26,7 @@ int configure_os(os* this, char* file_path)
 
 
 	// Create buffer.
-	char* buffer_ptr = malloc(FILE_IO_BUFFER_SIZE);
-	memset(buffer_ptr, '\0', FILE_IO_BUFFER_SIZE);
+	char* buffer_ptr = calloc(FILE_IO_BUFFER_SIZE, sizeof(char));
 
 
 	// Consume initial, utterly useless, line.
@@ -83,8 +82,7 @@ int init_os(os* this)
 
 
 	// Create file input buffer.
-	char* fin_buffer_ptr = malloc(STREAM_BUFFER_SIZE, sizeof(char));
-	memset(fin_buffer_ptr, '\0', STREAM_BUFFER_SIZE);
+	char* fin_buffer_ptr = calloc(STREAM_BUFFER_SIZE, sizeof(char));
 
 
 	// Metadata buffer management.
@@ -93,7 +91,7 @@ int init_os(os* this)
 
 
 	// Create metadata buffer.
-	prog_metadata* md_buffer_ptr = malloc(md_buffer_size, sizeof(prog_metadata));
+	prog_metadata* md_buffer_ptr = malloc(md_buffer_size * sizeof(prog_metadata));
 
 
 	// Consume initial, utterly useless, line.
@@ -104,7 +102,7 @@ int init_os(os* this)
 	while (read_until(stream_ptr, fin_buffer_ptr, STREAM_BUFFER_SIZE, METADATA_CODE_TERMINATOR) == 0)
 	{
 		// If room, ingest metadata.
-		if (current_md_index == md_buffer_size || ingest_metadata(this, fin_buffer_ptr, &md_buffer_ptr[current_md_index], stream_ptr))
+		if (current_md_index == md_buffer_size || ingest_metadata(fin_buffer_ptr, &md_buffer_ptr[current_md_index], stream_ptr))
 		{
 			// Abort.
 			close_file(stream_ptr);
@@ -122,7 +120,7 @@ int init_os(os* this)
 		if (ingested_md.code == APPLICATION && ingested_md.descriptor == END)
 		{
 			// Create and add the PCB.
-			create_pcb(&this->pcb_tree[md_buffer_ptr, current_md_index + 1]);
+			create_pcb(&this->pcb_tree[this->pcb_count], md_buffer_ptr, current_md_index + 1);
 			this->pcb_count++;
 
 
@@ -178,7 +176,7 @@ int init_os(os* this)
 	if (!(has_os_start_in_md && has_os_end_in_md))
 	{
 		// Alert.
-		printf("\n\nMetadata file does not start and stop the OS.\n\n")
+		printf("\n\nMetadata file does not start and stop the OS.\n\n");
 
 
 		// Abort.
@@ -187,7 +185,7 @@ int init_os(os* this)
 
 
 	// Start the scheduler.
-	if (start_sched(this->pcb_tree, &this->config))
+	if (start_sched(this->pcb_tree, this->pcb_count, &this->config))
 	{
 		// Alert.
 		printf("\n\nOS failed to start scheduler.\n\n");
@@ -610,7 +608,7 @@ int map_config(os* this, char* buffer_ptr, FILE* stream_ptr)
 
 
 		// Save.
-		set_cpu_scheduling(&this->config.cpu_scheduling, buffer_ptr);
+		set_cpu_scheduling(&this->config, buffer_ptr);
 
 
 		// Success.
@@ -661,7 +659,7 @@ int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 
 	// Unit token buffer.
-	char* unit_token_ptr = malloc(64);
+	char* unit_token_ptr = malloc(64 * sizeof(char));
 	memset(unit_token_ptr, 0, 64);
 
 
@@ -739,7 +737,7 @@ int get_memory_unit_multiplier(char* buffer_ptr, unsigned int* multiplier_ptr)
 
 
 // Add metadata.
-int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr, FILE* stream_ptr)
+int ingest_metadata(char* fin_buffer_ptr, prog_metadata* metadata_ptr, FILE* stream_ptr)
 {
 	// Match first character to metadata code.
 	switch (fin_buffer_ptr[0])
@@ -747,7 +745,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// OS?
 		case OS_CODE:
 			// Add code.
-			*metadata_ptr.code = OS;
+			metadata_ptr->code = OS;
 
 
 			// Get descriptor.
@@ -759,10 +757,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, OS_CODE
+					fin_buffer_ptr, OS_CODE
 				);
 
 
@@ -776,11 +774,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles (always 0 for OS start and end).
-			md_buffer_ptr.cycles = 0;
-
-
-			// Increment number of metadata.
-			*current_md_index++;
+			metadata_ptr->cycles = 0;
 
 
 			// Done.
@@ -790,7 +784,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// Application?
 		case APPLICATION_CODE:
 			// Add code.
-			*metadata_ptr.code = APPLICATION;
+			metadata_ptr->code = APPLICATION;
 
 
 			// Get descriptor.
@@ -802,10 +796,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, APPLICATION_CODE
+					fin_buffer_ptr, APPLICATION_CODE
 				);
 
 
@@ -819,7 +813,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles.
-			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+			metadata_ptr->cycles = atoi(fin_buffer_ptr);
 
 
 			// Done.
@@ -829,7 +823,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// Process?
 		case PROCESS_CODE:
 			// Add code.
-			*metadata_ptr.code = PROCESS;
+			metadata_ptr->code = PROCESS;
 
 
 			// Get descriptor.
@@ -837,14 +831,14 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add the descriptor.
-			if (add_metadata_descriptor(metadata_ptr, buffer_ptr))
+			if (add_metadata_descriptor(metadata_ptr, fin_buffer_ptr))
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, PROCESS_CODE
+					fin_buffer_ptr, PROCESS_CODE
 				);
 
 
@@ -858,7 +852,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles.
-			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+			metadata_ptr->cycles = atoi(fin_buffer_ptr);
 
 
 			// Done.
@@ -868,7 +862,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// Input?
 		case INPUT_CODE:
 			// Add code.
-			*metadata_ptr.code = INPUT;
+			metadata_ptr->code = INPUT;
 
 
 			// Get descriptor.
@@ -880,10 +874,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, INPUT_CODE
+					fin_buffer_ptr, INPUT_CODE
 				);
 
 
@@ -897,7 +891,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles.
-			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+			metadata_ptr->cycles = atoi(fin_buffer_ptr);
 
 
 			// Done.
@@ -907,7 +901,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// Output?
 		case OUTPUT_CODE:
 			// Add code.
-			*metadata_ptr.code = OUTPUT;
+			metadata_ptr->code = OUTPUT;
 
 
 			// Get descriptor.
@@ -919,10 +913,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, OUTPUT_CODE
+					fin_buffer_ptr, OUTPUT_CODE
 				);
 
 
@@ -936,7 +930,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles.
-			*metadata_ptr.cycles = atoi(fin_buffer_ptr);
+			metadata_ptr->cycles = atoi(fin_buffer_ptr);
 
 
 			// Done.
@@ -946,7 +940,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		// Memory?
 		case MEMORY_CODE:
 			// Add code.
-			*metadata_ptr.code = MEMORY;
+			metadata_ptr->code = MEMORY;
 
 
 			// Get descriptor.
@@ -958,10 +952,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 			{
 				// Alert.
 				printf("\n\n\
-					ERROR READING DESCRIPTOR %i:\n\
+					ERROR READING DESCRIPTOR:\n\
 					Invalid descriptor \"%s\" for code \"%c\".\
 					\n\n",
-					i + 1, fin_buffer_ptr, MEMORY_CODE
+					fin_buffer_ptr, MEMORY_CODE
 				);
 
 
@@ -975,7 +969,7 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 
 
 			// Add cycles.
-			*metadata_ptr.cycles = atoi(buffer_ptr);
+			metadata_ptr->cycles = atoi(fin_buffer_ptr);
 
 
 			// Done.
@@ -986,10 +980,10 @@ int ingest_metadata(pcb* this, char* fin_buffer_ptr, prog_metadata* metadata_ptr
 		default:
 			// Alert.
 			printf("\n\n\
-				ERROR READING CODE %i:\n\
+				ERROR READING DESCRIPTOR:\n\
 				Invalid code \"%c\".\
 				\n\n",
-				i + 1, fin_buffer_ptr[0]
+				fin_buffer_ptr[0]
 			);
 
 

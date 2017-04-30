@@ -15,7 +15,7 @@ int create_pcb(pcb* this, prog_metadata* metadata_buffer, unsigned int num_opera
 
 
 	// Allocate memory.
-	malloc(num_operations, sizeof(op));
+	this->operations = malloc(num_operations * sizeof(op));
 
 
 	// Import operations.
