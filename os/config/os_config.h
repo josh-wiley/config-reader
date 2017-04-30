@@ -5,7 +5,7 @@
 
 // Headers.
 #include <stdlib.h>
-#include <string>
+#include <string.h>
 
 
 // Definitions.

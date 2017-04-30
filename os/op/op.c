@@ -61,7 +61,7 @@ int set_op_type(op* this, prog_metadata* metadata_ptr)
         // Input?
         case INPUT:
             // Set.
-            this->type = INPUT;
+            this->type = OP_INPUT;
 
 
             // Done.
@@ -71,7 +71,7 @@ int set_op_type(op* this, prog_metadata* metadata_ptr)
         // Output?
         case OUTPUT:
             // Set.
-            this->type = OUTPUT;
+            this->type = OP_OUTPUT;
 
 
             // Done.
@@ -81,7 +81,7 @@ int set_op_type(op* this, prog_metadata* metadata_ptr)
         // Process?
         case PROCESS:
             // Set.
-            this->type = CPU;
+            this->type = OP_CPU;
 
 
             // Done.
@@ -91,7 +91,7 @@ int set_op_type(op* this, prog_metadata* metadata_ptr)
         // Memory?
         case MEMORY:
             // Set.
-            this->type = MEMORY;
+            this->type = OP_MEMORY;
 
 
             // Done.
@@ -119,7 +119,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // HDD?
         case HDD:
             // Set.
-            this->device = HDD;
+            this->device = OP_HDD;
 
 
             // Done.
@@ -129,7 +129,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // Keyboard?
         case KEYBOARD:
             // Set.
-            this->device = KEYBOARD;
+            this->device = OP_KEYBOARD;
 
 
             // Done.
@@ -139,7 +139,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // Mouse?
         case MOUSE:
             // Set.
-            this->device = MOUSE;
+            this->device = OP_MOUSE;
 
 
             // Done.
@@ -149,7 +149,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // Monitor?
         case MONITOR:
             // Set.
-            this->device = MONITOR;
+            this->device = OP_MONITOR;
 
 
             // Done.
@@ -159,7 +159,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // Speaker?
         case SPEAKER:
             // Set.
-            this->device = SPEAKER;
+            this->device = OP_SPEAKER;
 
 
             // Done.
@@ -169,7 +169,7 @@ int set_op_device(op* this, prog_metadata* metadata_ptr)
         // Printer?
         case PRINTER:
             // Set.
-            this->device = PRINTER;
+            this->device = OP_PRINTER;
 
 
             // Done.

@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "os/os.h"
-#include "os/prog_exec/prog_exec.h"
 
 
 // Program entry.

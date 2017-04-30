@@ -8,11 +8,11 @@
 
 
 // Operation type.
-typedef enum { INPUT, OUTPUT, CPU, MEMORY } op_type;
+typedef enum { OP_INPUT, OP_OUTPUT, OP_CPU, OP_MEMORY } op_type;
 
 
 // Operation device.
-typedef enum { HDD, PRINTER, KEYBOARD, MOUSE, MONITOR, SPEAKER } io_device;
+typedef enum { OP_HDD, OP_PRINTER, OP_KEYBOARD, OP_MOUSE, OP_MONITOR, OP_SPEAKER } io_device;
 
 
 // Operation.
